@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import OTPVerification from './OTPVerification'
-import NationalIDEntry from './NationalIDEntry'
+import LoginPortal from './LoginPortal'
 import { GlobeIcon, GraduationCap } from 'lucide-react'
 
-const AuthenticationForm = () => {
+const AuthenticationComponent = () => {
 
-    const academicYear = new Date().getFullYear()
+    // const academicYear = new Date().getFullYear()
 
     const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
@@ -70,14 +70,14 @@ const AuthenticationForm = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600">
+                    {/* <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>العام {academicYear} / {academicYear + 1}</span>
-                    </div>
+                    </div> */}
 
                     <button
                         type="button"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#0077C6]/40 bg-white text-xs font-bold text-[#0F172A] hover:text-[#0077C6] transition-all shadow-sm"
+                        className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#0077C6]/40 bg-white text-xs font-bold text-[#0F172A] hover:text-[#0077C6] transition-all shadow-sm"
                     >
                         <GlobeIcon className="w-3.5 h-3.5 text-[#64748B]" />
                         <span>English</span>
@@ -105,7 +105,7 @@ const AuthenticationForm = () => {
                     <button
                         type="button"
                         onClick={() => handleGoToStep(1)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 font-bold ${currentStep === 1
+                        className={`cursor-pointer flex-1 py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 font-bold ${currentStep === 1
                             ? 'bg-white text-[#0A2540] shadow-sm'
                             : 'text-[#64748B] hover:text-[#0F172A]'
                             }`}
@@ -118,7 +118,7 @@ const AuthenticationForm = () => {
                     <button
                         type="button"
                         onClick={() => handleGoToStep(2)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 font-bold ${currentStep === 2
+                        className={`cursor-pointer flex-1 py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 font-bold ${currentStep === 2
                             ? 'bg-white text-[#0A2540] shadow-sm'
                             : 'text-[#64748B] hover:text-[#0F172A]'
                             }`}
@@ -133,7 +133,7 @@ const AuthenticationForm = () => {
                 {/* STEP 1: NATIONAL ID ENTRY */}
                 {/* ============================================== */}
                 {currentStep === 1 && (
-                    <NationalIDEntry
+                    <LoginPortal
                         handleGoToStep={() => handleGoToStep(1)}
                     />
                 )}
@@ -162,4 +162,4 @@ const AuthenticationForm = () => {
     )
 }
 
-export default AuthenticationForm
+export default AuthenticationComponent

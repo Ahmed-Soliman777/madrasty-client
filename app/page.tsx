@@ -1,4 +1,4 @@
-import AuthenticationForm from '@/components/auth/AuthenticationForm';
+import AuthenticationComponent from '@/components/auth/AuthenticationComponent';
 import {
   CheckCircle,
   Landmark,
@@ -19,7 +19,7 @@ export default function Home() {
         {/* ========================================== */}
         {/* RIGHT COLUMN: AUTHENTICATION FORM (RTL Start) */}
         {/* ========================================== */}
-        <AuthenticationForm />
+        <AuthenticationComponent />
 
 
         {/* ========================================== */}
@@ -69,10 +69,6 @@ export default function Home() {
 
           {/* Middle Section */}
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#F5A623]/15 border border-[#F5A623]/30 text-amber-300 text-xs font-bold mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#F5A623]"></span>
-              <span>منظومة التعليم الرقمي المتكاملة</span>
-            </div>
 
             <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
               مرحباً بكم في منصة <span className="text-transparent bg-clip-text bg-linear-to-l from-amber-300 via-amber-200 to-white">مَـدْرَسَـتِـي</span>

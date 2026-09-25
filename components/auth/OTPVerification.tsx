@@ -99,6 +99,11 @@ const OTPVerification = ({
                             00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}
                         </span>
                     </div>
+
+                    <button type="button" onClick={() => alert('جاري طلب اتصال صوتي مسجل لرقم ولي الأمر...')} className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>لم يصلك الرمز؟ اعادة المحاولة</span>
+                    </button>
                 </div>
             </div>
 
@@ -114,10 +119,7 @@ const OTPVerification = ({
 
             {/* Resend code */}
             <div className="text-center pt-1">
-                <button type="button" onClick={() => alert('جاري طلب اتصال صوتي مسجل لرقم ولي الأمر...')} className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline">
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>لم يصلك الرمز؟ اعادة المحاولة</span>
-                </button>
+
             </div>
 
         </form>
