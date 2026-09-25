@@ -1,11 +1,18 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { usePathname, useRouter } from '@/i18n/navigation'
 import OTPVerification from './OTPVerification'
 import LoginPortal from './LoginPortal'
 import { GlobeIcon, GraduationCap } from 'lucide-react'
 
 const AuthenticationComponent = () => {
+
+    const locale = useLocale();
+    const t = useTranslations('auth');
+    const router = useRouter();
+    const pathname = usePathname();
 
     // const academicYear = new Date().getFullYear()
 
@@ -61,10 +68,10 @@ const AuthenticationComponent = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-1.5">
-                                <span className="text-xl font-black text-[#0A2540] tracking-tight">مَـدْرَسَـتِـي</span>
+                                <span className="text-xl font-black text-[#0A2540] tracking-tight">{t('brandName')}</span>
                                 <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#E6F2FF] text-[#0077C6] rounded-md border border-blue-200">NEIS</span>
                             </div>
-                            <p className="text-[11px] text-[#64748B] leading-none mt-0.5">مدارس النيل المصرية الدولية</p>
+                            <p className="text-[11px] text-[#64748B] leading-none mt-0.5">{t("schoolName")}</p>
                         </div>
                     </div>
                 </div>
@@ -77,10 +84,12 @@ const AuthenticationComponent = () => {
 
                     <button
                         type="button"
+                        onClick={() => router.replace(pathname, { locale: locale === 'ar' ? 'en' : 'ar' })}
+                        aria-label={t('switchLanguage')}
                         className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#0077C6]/40 bg-white text-xs font-bold text-[#0F172A] hover:text-[#0077C6] transition-all shadow-sm"
                     >
                         <GlobeIcon className="w-3.5 h-3.5 text-[#64748B]" />
-                        <span>English</span>
+                        <span>{locale === 'ar' ? t('english') : t('arabic')}</span>
                     </button>
                 </div>
             </div>
@@ -89,14 +98,14 @@ const AuthenticationComponent = () => {
             <div className="w-full mx-auto my-auto py-2">
 
                 {/* Badge & Step Header */}
-                <div className="text-right mb-6">
+                <div className="text-start mb-6">
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0A2540] tracking-tight">
-                        تسجيل الدخول
+                        {t('loginTitle')}
                     </h1>
                     <p className="text-sm text-[#64748B] mt-2">
                         {currentStep === 1
-                            ? 'أدخل الرقم القومي للطالب للمتابعة والوصول الفوري لتقارير الأداء والحضور'
-                            : 'أدخل رمز التحقق المكون من 6 أرقام لتأكيد الهوية والدخول'}
+                            ? t('nationalIdDescription')
+                            : t('otpDescription')}
                     </p>
                 </div>
 
@@ -112,7 +121,7 @@ const AuthenticationComponent = () => {
                     >
                         <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center font-mono ${currentStep === 1 ? 'bg-[#0A2540] text-white' : 'bg-slate-300 text-slate-600'
                             }`}>1</span>
-                        <span>الرقم القومي</span>
+                        <span>{t('nationalIdStep')}</span>
                     </button>
 
                     <button
@@ -125,7 +134,7 @@ const AuthenticationComponent = () => {
                     >
                         <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center font-mono ${currentStep === 2 ? 'bg-[#F5A623] text-[#0A2540] font-bold' : 'bg-slate-300 text-slate-600'
                             }`}>2</span>
-                        <span>رمز التحقق OTP</span>
+                        <span>{t('otpStep')}</span>
                     </button>
                 </div>
 
@@ -154,7 +163,7 @@ const AuthenticationComponent = () => {
             {/* Footer & Support Notice */}
             <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
                 <div className="text-[11px] text-slate-400 font-mono">
-                    بوابة النيل v3.4 • NEIS Secure Portal
+                    {t('footer')}
                 </div>
             </div>
 

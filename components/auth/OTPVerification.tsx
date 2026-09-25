@@ -2,6 +2,7 @@
 
 import { Check, LockOpen, MessageCircle, MessageSquareCheck, Timer } from 'lucide-react';
 import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface OTPVerificationProps {
     otpInputRefs: React.MutableRefObject<(HTMLInputElement | null)[]>;
@@ -13,6 +14,8 @@ const OTPVerification = ({
     otpInputRefs,
     timerSeconds
 }: OTPVerificationProps) => {
+
+    const t = useTranslations('auth');
 
     // OTP state (6 digit array)
     const [otpValues, setOtpValues] = useState<string[]>(['4', '8', '2', '9', '', '']);
@@ -44,23 +47,23 @@ const OTPVerification = ({
 
     const handleStep2Submit = (e: React.FormEvent) => {
         e.preventDefault();
-        alert('تم التحقق بنجاح! جاري تحويلك إلى لوحة التحكم الخاصة بمنصة مَدرستي...');
+        alert(t('verificationSuccess'));
     };
 
     return (
         <form onSubmit={handleStep2Submit} className="space-y-6 transition-all duration-300">
 
             {/* WhatsApp Notice Banner */}
-            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-start gap-3 text-right">
+            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-start gap-3 text-start">
                 <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
                     <MessageSquareCheck className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
                     <p className="font-bold text-emerald-900 leading-tight">
-                        تم إرسال رمز التحقق بنجاح!
+                        {t('otpSentTitle')}
                     </p>
                     <p className="text-emerald-700 mt-1 leading-relaxed">
-                        عبر تطبيق <span className="font-bold">WhatsApp</span> ورسائل <span className="font-bold">SMS</span> إلى رقم الهاتف المسجل لدى المدرسة (<span className="font-mono font-bold" dir="ltr">+20 10 •••• 4592</span>).
+                        {t('otpSentDescription')} <span className="font-bold">WhatsApp</span> {t('and')} <span className="font-bold">SMS</span> {t('toRegisteredNumber')} (<span className="font-mono font-bold" dir="ltr">+20 10 •••• 4592</span>).
                     </p>
                 </div>
             </div>
@@ -69,9 +72,9 @@ const OTPVerification = ({
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-bold text-[#0F172A]">
-                        رمز التحقق (6 أرقام) <span className="text-rose-500">*</span>
+                        {t('otpLabel')} <span className="text-rose-500">*</span>
                     </label>
-                    <span className="text-[11px] font-semibold text-[#64748B]">ينتهي خلال 3 دقائق</span>
+                    <span className="text-[11px] font-semibold text-[#64748B]">{t('otpExpires')}</span>
                 </div>
 
                 <div className="grid grid-cols-6 gap-2 sm:gap-3" dir="ltr">
@@ -91,18 +94,18 @@ const OTPVerification = ({
                 </div>
 
                 {/* Resend Timer */}
-                <div className="flex items-center justify-between text-xs mt-3 text-[#64748B] font-semibold" dir="rtl">
+                <div className="flex items-center justify-between text-xs mt-3 text-[#64748B] font-semibold">
                     <div className="flex items-center gap-1.5 ">
                         <Timer className="w-3.5 h-3.5 text-[#F5A623]" />
-                        <span>إعادة إرسال الرمز خلال: </span>
+                        <span>{t('resendCountdown')}</span>
                         <span id="resendTimer" className="font-mono font-bold text-[#0A2540] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                             00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}
                         </span>
                     </div>
 
-                    <button type="button" onClick={() => alert('جاري طلب اتصال صوتي مسجل لرقم ولي الأمر...')} className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline">
+                    <button type="button" onClick={() => alert(t('voiceCallRequested'))} className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline">
                         <MessageCircle className="w-3.5 h-3.5" />
-                        <span>لم يصلك الرمز؟ اعادة المحاولة</span>
+                        <span>{t('didNotReceive')}</span>
                     </button>
                 </div>
             </div>
@@ -113,8 +116,8 @@ const OTPVerification = ({
                 className="w-full h-12 px-6 rounded-xl bg-[#F5A623] hover:bg-[#E09415] active:scale-[0.99] text-[#0A2540] text-sm font-extrabold flex items-center justify-center gap-2 shadow-[0_10px_25px_-5px_rgba(245,166,35,0.4)] transition-all group"
             >
                 <LockOpen className="w-4 h-4 text-[#0A2540]" />
-                <span>تأكيد الدخول والوصول للمنصة</span>
-                <Check className="w-4 h-4 mr-1" />
+                <span>{t('confirmLogin')}</span>
+                <Check className="w-4 h-4 ms-1" />
             </button>
 
             {/* Resend code */}
