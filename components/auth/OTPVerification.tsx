@@ -5,49 +5,52 @@ import React, { useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 interface OTPVerificationProps {
-    otpInputRefs: React.MutableRefObject<(HTMLInputElement | null)[]>;
     timerSeconds: number;
     handleGoToStep: (step: number) => void;
 }
 
 const OTPVerification = ({
-    otpInputRefs,
     timerSeconds
 }: OTPVerificationProps) => {
 
     const t = useTranslations('auth');
 
-    // OTP state (6 digit array)
-    const [otpValues, setOtpValues] = useState<string[]>(['4', '8', '2', '9', '', '']);
+    // OTP state
+    const [otp, setOtp] = useState<string>('');
 
-    // Handle OTP digit changes and auto-advance
-    const handleOtpChange = (index: number, value: string) => {
-        if (/^[0-9]?$/.test(value)) {
-            const newOtp = [...otpValues];
-            newOtp[index] = value;
-            setOtpValues(newOtp);
+    const [loading, setLoading] = useState<boolean>(false)
 
-            if (value && index < 5) {
-                otpInputRefs.current[index + 1]?.focus();
-            }
-        }
-    };
-
-    const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Backspace') {
-            if (!otpValues[index] && index > 0) {
-                otpInputRefs.current[index - 1]?.focus();
-            } else {
-                const newOtp = [...otpValues];
-                newOtp[index] = '';
-                setOtpValues(newOtp);
-            }
-        }
-    };
-
-    const handleStep2Submit = (e: React.FormEvent) => {
+    const handleStep2Submit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert(t('verificationSuccess'));
+        setLoading(true)
+        try {
+            const res = await fetch(`http://localhost:5000/api/auth/guardian/otp`, {
+                method: "POST",
+                body: JSON.stringify({
+                    LoginOTP: otp
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            const data = await res.json()
+
+            // console.log(data)
+
+            if (!res.ok) {
+                alert(data.message);
+                setLoading(false)
+                return
+            }
+
+            alert(data.message);
+
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
     };
 
     return (
@@ -77,20 +80,15 @@ const OTPVerification = ({
                     <span className="text-[11px] font-semibold text-[#64748B]">{t('otpExpires')}</span>
                 </div>
 
-                <div className="grid grid-cols-6 gap-2 sm:gap-3" dir="ltr">
-                    {otpValues.map((val, idx) => (
-                        <input
-                            key={idx}
-                            type="text"
-                            maxLength={1}
-                            value={val}
-                            ref={(el) => { otpInputRefs.current[idx] = el; }}
-                            onChange={(e) => handleOtpChange(idx, e.target.value)}
-                            onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                            className={`w-full h-13 text-center text-xl font-bold font-mono rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#0077C6] ${val ? 'text-[#0A2540] bg-slate-50 border border-[#E2E8F0]' : 'text-[#0A2540] bg-white border-2 border-[#0077C6] animate-pulse'
-                                }`}
-                        />
-                    ))}
+                <div className="grid grid-cols-1 gap-2 sm:gap-3" dir="ltr">
+                    <input
+                        maxLength={6}
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        className={`w-full h-13 text-center text-xl font-bold font-mono rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#0077C6]`}
+                    />
+
                 </div>
 
                 {/* Resend Timer */}
@@ -116,8 +114,8 @@ const OTPVerification = ({
                 className="w-full h-12 px-6 rounded-xl bg-[#F5A623] hover:bg-[#E09415] active:scale-[0.99] text-[#0A2540] text-sm font-extrabold flex items-center justify-center gap-2 shadow-[0_10px_25px_-5px_rgba(245,166,35,0.4)] transition-all group"
             >
                 <LockOpen className="w-4 h-4 text-[#0A2540]" />
-                <span>{t('confirmLogin')}</span>
-                <Check className="w-4 h-4 ms-1" />
+                <span>{loading ? t('confirmLoginButtonLoading') :  t('confirmLoginButton') }</span>
+                <Check className="w-4 h-4 mr-1" />
             </button>
 
             {/* Resend code */}

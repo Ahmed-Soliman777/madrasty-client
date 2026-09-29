@@ -14,8 +14,6 @@ const AuthenticationComponent = () => {
     const router = useRouter();
     const pathname = usePathname();
 
-    // const academicYear = new Date().getFullYear()
-
     const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
     const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -77,11 +75,6 @@ const AuthenticationComponent = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>العام {academicYear} / {academicYear + 1}</span>
-                    </div> */}
-
                     <button
                         type="button"
                         onClick={() => router.replace(pathname, { locale: locale === 'ar' ? 'en' : 'ar' })}
@@ -110,7 +103,7 @@ const AuthenticationComponent = () => {
                 </div>
 
                 {/* Multi-Step Switcher Indicator */}
-                <div className="flex items-center gap-2 p-1.5 mb-7 rounded-xl bg-slate-100/90 border border-slate-200 text-xs font-bold">
+                {/* <div className="flex items-center gap-2 p-1.5 mb-7 rounded-xl bg-slate-100/90 border border-slate-200 text-xs font-bold">
                     <button
                         type="button"
                         onClick={() => handleGoToStep(1)}
@@ -136,15 +129,13 @@ const AuthenticationComponent = () => {
                             }`}>2</span>
                         <span>{t('otpStep')}</span>
                     </button>
-                </div>
+                </div> */}
 
                 {/* ============================================== */}
                 {/* STEP 1: NATIONAL ID ENTRY */}
                 {/* ============================================== */}
                 {currentStep === 1 && (
-                    <LoginPortal
-                        handleGoToStep={() => handleGoToStep(1)}
-                    />
+                    <LoginPortal onLoginSuccess={() => handleGoToStep(2)} />
                 )}
 
                 {/* ============================================== */}
@@ -152,7 +143,6 @@ const AuthenticationComponent = () => {
                 {/* ============================================== */}
                 {currentStep === 2 && (
                     <OTPVerification
-                        otpInputRefs={otpInputRefs}
                         timerSeconds={timerSeconds}
                         handleGoToStep={() => handleGoToStep(2)}
                     />
