@@ -56,6 +56,8 @@
     "resendCountdown": "إعادة إرسال الرمز خلال:",
     "voiceCallRequested": "جاري طلب اتصال صوتي آلي لرقم ولي الأمر...",
     "didNotReceive": "لم يصلك الرمز؟ إعادة المحاولة",
-    "confirmLogin": "تأكيد الدخول والوصول للمنصة"
+    "confirmLogin": "تأكيد الدخول والوصول للمنصة",
+    "confirmLoginButton": "تأكيد OTP",
+    "confirmLoginButtonLoading": "تحميل..."
   }
 }
