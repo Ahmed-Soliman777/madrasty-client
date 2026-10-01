@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Lock, Mail } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const StaffLoginForm = () => {
@@ -10,8 +11,10 @@ const StaffLoginForm = () => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [staffEmail, setStaffEmail] = useState<string | undefined>(undefined)
-    const [staffPassword, setStaffPassword] = useState<string | undefined>(undefined)
+    const [staffEmail, setStaffEmail] = useState<string>("")
+    const [staffPassword, setStaffPassword] = useState<string>("")
+
+    const router = useRouter()
 
     // Form Submission handlers
     const handlePortalSubmit = async (e: React.FormEvent) => {
@@ -38,7 +41,9 @@ const StaffLoginForm = () => {
                 return
             }
 
-            alert(data.message)
+            // alert(data.message)
+
+            router.replace('/staff')
         } catch (error) {
             console.error(error)
         } finally {
