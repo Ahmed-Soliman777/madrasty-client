@@ -24,7 +24,7 @@
     "arabic": "العربية",
     "loginTitle": "تسجيل الدخول",
     "nationalIdDescription": "أدخل الرقم القومي للطالب للمتابعة والوصول إلى تقارير الأداء والحضور.",
-    "otpDescription": "أدخل رمز التحقق المكون من 6 أرقام لتأكيد الهوية وتسجيل الدخول.",
+    "otpDescription": "أدخل الرمز المكون من 6 أرقام المرسل عبر WhatsApp لتسجيل الدخول.",
     "nationalIdStep": "الرقم القومي",
     "otpStep": "رمز التحقق OTP",
     "footer": "بوابة النيل v3.4 • NEIS Secure Portal",
@@ -52,12 +52,17 @@
     "and": "ورسائل",
     "toRegisteredNumber": "إلى رقم الهاتف المسجل لدى المدرسة",
     "otpLabel": "رمز التحقق (6 أرقام)",
-    "otpExpires": "ينتهي خلال 3 دقائق",
+    "otpExpires": "ينتهي خلال 5 دقائق",
     "resendCountdown": "إعادة إرسال الرمز خلال:",
     "voiceCallRequested": "جاري طلب اتصال صوتي آلي لرقم ولي الأمر...",
     "didNotReceive": "لم يصلك الرمز؟ إعادة المحاولة",
     "confirmLogin": "تأكيد الدخول والوصول للمنصة",
     "confirmLoginButton": "تأكيد OTP",
-    "confirmLoginButtonLoading": "تحميل..."
+    "confirmLoginButtonLoading": "جارٍ التحميل...",
+    "otpDigit": "الخانة",
+    "resendOtp": "إعادة إرسال الرمز",
+    "requestOtpError": "تعذر إرسال الرمز. تحقق من الرقم القومي وحاول مرة أخرى.",
+    "verifyOtpError": "الرمز غير صحيح أو انتهت صلاحيته. تحقق منه وحاول مرة أخرى.",
+    "networkError": "تعذر الاتصال بالخادم. تحقق من اتصالك وحاول مرة أخرى."
   }
 }

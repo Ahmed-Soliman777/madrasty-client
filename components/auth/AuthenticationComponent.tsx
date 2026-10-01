@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import OTPVerification from './OTPVerification'
@@ -15,43 +15,31 @@ const AuthenticationComponent = () => {
     const pathname = usePathname();
 
     const [currentStep, setCurrentStep] = useState<1 | 2>(1);
-
-    const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const [challenge, setChallenge] = useState<GuardianChallenge | null>(null);
 
     // Timer state for resend OTP
     const [timerSeconds, setTimerSeconds] = useState<number>(45);
 
     // Handle countdown timer when step 2 is active
     useEffect(() => {
-        let interval: NodeJS.Timeout | null = null;
-        if (currentStep === 2 && timerSeconds > 0) {
-            interval = setInterval(() => {
-                setTimerSeconds((prev) => {
-                    if (prev <= 1) {
-                        if (interval) clearInterval(interval);
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
-        }
-        return () => {
-            if (interval) clearInterval(interval);
-        };
-    }, [currentStep, timerSeconds]);
+        if (currentStep !== 2) return;
+        const interval = setInterval(() => {
+            setTimerSeconds((seconds) => Math.max(seconds - 1, 0));
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [currentStep]);
 
     // Handle step transition
     const handleGoToStep = (step: 1 | 2) => {
         setCurrentStep(step);
         if (step === 2) {
             setTimerSeconds(45);
-            // Focus on the first unfilled OTP box after render
-            setTimeout(() => {
-                if (otpInputRefs.current[4]) {
-                    otpInputRefs.current[4]?.focus();
-                }
-            }, 100);
         }
+    };
+
+    const handleLoginSuccess = (otpChallenge: GuardianChallenge) => {
+        setChallenge(otpChallenge);
+        handleGoToStep(2);
     };
 
     return (
@@ -135,16 +123,24 @@ const AuthenticationComponent = () => {
                 {/* STEP 1: NATIONAL ID ENTRY */}
                 {/* ============================================== */}
                 {currentStep === 1 && (
-                    <LoginPortal onLoginSuccess={() => handleGoToStep(2)} />
+                    <LoginPortal onLoginSuccess={handleLoginSuccess} />
                 )}
 
                 {/* ============================================== */}
                 {/* STEP 2: OTP VERIFICATION */}
                 {/* ============================================== */}
-                {currentStep === 2 && (
+                {currentStep === 2 && challenge && (
                     <OTPVerification
+                        nationalId={challenge.nationalId}
+                        phone={challenge.phone}
+                        maskedPhone={challenge.maskedPhone}
                         timerSeconds={timerSeconds}
-                        handleGoToStep={() => handleGoToStep(2)}
+                        onOtpResent={(nextChallenge) => {
+                            setChallenge((current) => current
+                                ? { ...current, ...nextChallenge }
+                                : current);
+                            setTimerSeconds(45);
+                        }}
                     />
                 )}
 

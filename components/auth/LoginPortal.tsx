@@ -6,10 +6,6 @@ import { useTranslations } from 'next-intl'
 import ParentLoginForm from './ParentLoginForm';
 import StaffLoginPortal from './StaffLoginForm';
 
-interface LoginPortalProps {
-    onLoginSuccess: () => void;
-}
-
 const LoginPortal = ({ onLoginSuccess }: LoginPortalProps) => {
 
     const t = useTranslations('auth');
