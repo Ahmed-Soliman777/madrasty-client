@@ -1,1 +1,61 @@
 @import "tailwindcss";
+
+:root {
+  --bg: 243 245 244;
+  --surface: 255 255 255;
+  --ink: 18 38 58;
+  --mute: 93 109 124;
+  --line: 225 231 229;
+  --navy: 10 37 64;
+  --brand: 0 114 188;
+  --soft: 230 242 255;
+  --ok: 5 150 105;
+  --ok-bg: 223 245 236;
+  --warn: 166 91 0;
+  --warn-bg: 253 240 216;
+  --bad: 179 36 63;
+  --bad-bg: 251 229 234;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: 14 23 31;
+    --surface: 22 34 44;
+    --ink: 232 238 243;
+    --mute: 147 163 177;
+    --line: 38 54 66;
+    --navy: 18 58 99;
+    --brand: 74 168 234;
+    --soft: 22 48 74;
+    --ok: 95 211 154;
+    --ok-bg: 18 56 42;
+    --warn: 240 179 90;
+    --warn-bg: 58 42 16;
+    --bad: 255 138 160;
+    --bad-bg: 64 25 42;
+  }
+}
+
+@theme inline {
+  --color-bg: rgb(var(--bg));
+  --color-surface: rgb(var(--surface));
+  --color-ink: rgb(var(--ink));
+  --color-mute: rgb(var(--mute));
+  --color-line: rgb(var(--line));
+  --color-navy: rgb(var(--navy));
+  --color-brand: rgb(var(--brand));
+  --color-soft: rgb(var(--soft));
+  --color-ok: rgb(var(--ok));
+  --color-ok-bg: rgb(var(--ok-bg));
+  --color-warn: rgb(var(--warn));
+  --color-warn-bg: rgb(var(--warn-bg));
+  --color-bad: rgb(var(--bad));
+  --color-bad-bg: rgb(var(--bad-bg));
+  --font-sans: var(--font-plex), Tahoma, sans-serif;
+}
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+}
+:focus-visible {
+  @apply outline-3 outline-offset-2 outline-brand;
+}
