@@ -64,5 +64,100 @@
     "requestOtpError": "We could not send a code. Check the ID and try again.",
     "verifyOtpError": "That code is invalid or expired. Check it and try again.",
     "networkError": "Unable to reach the server. Check your connection and try again."
+  },
+  "teacherQuick": {
+    "nav": {
+      "ariaLabel": "Main navigation",
+      "brand": "NEIS · School System",
+      "quickPortal": "Teacher Quick Portal",
+      "schedule": "Schedule & Homework",
+      "grades": "Tracking & Grades",
+      "messages": "Messages",
+      "settings": "Settings",
+      "support": "Technical & Academic Support",
+      "version": "Version v3.1"
+    },
+    "header": {
+      "teacherName": "Mr. Mohamed Ali",
+      "subtitle": "Math Teacher · Grade 4 Primary / 1-A",
+      "period": "Period 3 is live",
+      "periodTime": "10:00 – 10:45 AM · Class 4/A"
+    },
+    "status": {
+      "all": "All",
+      "present": "Present",
+      "late": "Late",
+      "absent": "Absent"
+    },
+    "attendance": {
+      "title": "Student roster",
+      "rosterCount": "{shown} of {total}",
+      "markAllPresent": "Mark whole class present",
+      "exportReport": "Export daily report",
+      "tab": "{label} ({count})",
+      "statusOf": "{name}'s status",
+      "starBehavior": "Behavior star",
+      "arrived": "Arrived {time} AM",
+      "arrivedLate": "Late, {time} AM",
+      "absentNoExcuse": "Absent, no excuse",
+      "absenceAlert": "Absence recorded — parent notified"
+    },
+    "points": {
+      "count": "{count, plural, one {# point} other {# points}}",
+      "participation": "+5 Participation",
+      "homework": "+5 Homework",
+      "distraction": "-3 Distracted",
+      "reason": {
+        "participation": "Great participation",
+        "homework": "Homework done",
+        "distraction": "Distracted"
+      }
+    },
+    "homework": {
+      "title": "Assign homework now",
+      "fieldTitle": "Homework title",
+      "fieldDue": "Due",
+      "fieldNotes": "Notes for students",
+      "defaultTitle": "Page 45 exercises – multiplying by a 2-digit number",
+      "defaultDue": "Tomorrow – 8:00 AM",
+      "defaultNotes": "Solve questions 1 to 10 and show your thinking steps.",
+      "send": "Send to parents",
+      "cancel": "Cancel"
+    },
+    "pulse": {
+      "title": "Class energy",
+      "veryActive": "Very active",
+      "detail": "Outstanding engagement in problem solving: {active} of {total} students"
+    },
+    "comms": {
+      "title": "Today's communication log",
+      "now": "Just now",
+      "minutesAgo": "{minutes}m ago",
+      "heading": {
+        "excellence": "Excellence certificate: {subject}",
+        "absence": "Absence notice: {subject}",
+        "homework": "New homework: {subject}"
+      },
+      "meta": {
+        "excellence": "Thank-you card sent to parent",
+        "absence": "Delivered via SMS",
+        "homework": "Sent to parents"
+      }
+    },
+    "toast": {
+      "statusChanged": "{name}: {status}",
+      "pointsAwarded": "{reason} · {name}",
+      "allPresent": "Whole class marked present",
+      "exporting": "Preparing the daily report…",
+      "homeworkSent": "Homework sent to all parents"
+    },
+    "students": {
+      "ahmed": "Ahmed Soliman",
+      "omar": "Omar Khaled",
+      "yasser": "Yasser Mahmoud",
+      "fahd": "Fahd Abdullah",
+      "karim": "Karim Sami",
+      "ziad": "Ziad Tarek"
+    }
   }
 }

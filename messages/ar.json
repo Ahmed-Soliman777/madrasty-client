@@ -18,7 +18,7 @@
   },
   "auth": {
     "brandName": "مَـدْرَسَـتِـي",
-	"schoolName": "مدارس النيل المصرية الدولية",
+    "schoolName": "مدارس النيل المصرية الدولية",
     "switchLanguage": "تغيير اللغة",
     "english": "English",
     "arabic": "العربية",
@@ -64,5 +64,100 @@
     "requestOtpError": "تعذر إرسال الرمز. تحقق من الرقم القومي وحاول مرة أخرى.",
     "verifyOtpError": "الرمز غير صحيح أو انتهت صلاحيته. تحقق منه وحاول مرة أخرى.",
     "networkError": "تعذر الاتصال بالخادم. تحقق من اتصالك وحاول مرة أخرى."
+  },
+  "teacherQuick": {
+    "nav": {
+      "ariaLabel": "القائمة الرئيسية",
+      "brand": "NEIS · نظام المدرسة",
+      "quickPortal": "بوابة المعلم السريعة",
+      "schedule": "الجدول والواجبات",
+      "grades": "سجل المتابعة والدرجات",
+      "messages": "الرسائل والتواصل",
+      "settings": "الإعدادات",
+      "support": "الدعم الفني والأكاديمي",
+      "version": "الإصدار v3.1"
+    },
+    "header": {
+      "teacherName": "أ. محمد علي",
+      "subtitle": "معلم رياضيات · الصف الرابع الابتدائي / 1-أ",
+      "period": "الحصة الثالثة الآن",
+      "periodTime": "10:00 – 10:45 ص · الفصل 4/أ"
+    },
+    "status": {
+      "all": "الكل",
+      "present": "حاضر",
+      "late": "متأخر",
+      "absent": "غائب"
+    },
+    "attendance": {
+      "title": "سجل الطلاب",
+      "rosterCount": "{shown} من {total}",
+      "markAllPresent": "تسجيل حضور الفصل كاملاً",
+      "exportReport": "تصدير التقرير اليومي",
+      "tab": "{label} ({count})",
+      "statusOf": "حالة {name}",
+      "starBehavior": "نجمة سلوك",
+      "arrived": "حضر {time} ص",
+      "arrivedLate": "متأخر {time} ص",
+      "absentNoExcuse": "غائب بدون عذر",
+      "absenceAlert": "تنبيه غياب مسجل — تم إخطار ولي الأمر"
+    },
+    "points": {
+      "count": "{count, plural, =0 {0 نقطة} one {نقطة} two {نقطتان} few {# نقاط} many {# نقطة} other {# نقطة}}",
+      "participation": "+5 مشاركة",
+      "homework": "+5 واجب",
+      "distraction": "-3 تشتت",
+      "reason": {
+        "participation": "مشاركة متميزة",
+        "homework": "إنجاز الواجب",
+        "distraction": "تشتت"
+      }
+    },
+    "homework": {
+      "title": "إسناد واجب فوري",
+      "fieldTitle": "عنوان الواجب",
+      "fieldDue": "موعد التسليم",
+      "fieldNotes": "ملاحظات للطلاب",
+      "defaultTitle": "تمارين صفحة 45 – الضرب في عدد من رقمين",
+      "defaultDue": "غداً – 8:00 صباحاً",
+      "defaultNotes": "حل الأسئلة من 1 إلى 10 مع كتابة خطوات التفكير.",
+      "send": "إرسال لأولياء الأمور",
+      "cancel": "إلغاء"
+    },
+    "pulse": {
+      "title": "طاقة الفصل",
+      "veryActive": "نشط جداً",
+      "detail": "تفاعل استثنائي في حل المسائل: {active} من {total} طالباً"
+    },
+    "comms": {
+      "title": "سجل التواصل اليوم",
+      "now": "الآن",
+      "minutesAgo": "منذ {minutes} د",
+      "heading": {
+        "excellence": "شهادة تميز: {subject}",
+        "absence": "إشعار غياب: {subject}",
+        "homework": "واجب جديد: {subject}"
+      },
+      "meta": {
+        "excellence": "أُرسلت بطاقة شكر لولي الأمر",
+        "absence": "تم التسليم عبر SMS",
+        "homework": "أُرسل لأولياء الأمور"
+      }
+    },
+    "toast": {
+      "statusChanged": "{name}: {status}",
+      "pointsAwarded": "{reason} · {name}",
+      "allPresent": "تم تسجيل حضور الفصل كاملاً",
+      "exporting": "جاري تجهيز التقرير اليومي…",
+      "homeworkSent": "تم إرسال الواجب لجميع أولياء الأمور"
+    },
+    "students": {
+      "ahmed": "أحمد سليمان",
+      "omar": "عمر خالد",
+      "yasser": "ياسر محمود",
+      "fahd": "فهد عبد الله",
+      "karim": "كريم سامي",
+      "ziad": "زياد طارق"
+    }
   }
 }
