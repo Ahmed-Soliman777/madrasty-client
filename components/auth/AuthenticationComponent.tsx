@@ -1,160 +1,94 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useLocale, useTranslations } from 'next-intl'
-import { usePathname, useRouter } from '@/i18n/navigation'
-import OTPVerification from './OTPVerification'
-import LoginPortal from './LoginPortal'
-import { GlobeIcon, GraduationCap } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { Globe2, GraduationCap } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import OTPVerification from "./OTPVerification";
+import LoginPortal from "./LoginPortal";
 
 const AuthenticationComponent = () => {
+  const locale = useLocale();
+  const t = useTranslations("auth");
+  const router = useRouter();
+  const pathname = usePathname();
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [challenge, setChallenge] = useState<GuardianChallenge | null>(null);
+  const [timerSeconds, setTimerSeconds] = useState(45);
 
-    const locale = useLocale();
-    const t = useTranslations('auth');
-    const router = useRouter();
-    const pathname = usePathname();
+  useEffect(() => {
+    if (currentStep !== 2) return;
+    const interval = window.setInterval(() => {
+      setTimerSeconds((seconds) => Math.max(seconds - 1, 0));
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [currentStep]);
 
-    const [currentStep, setCurrentStep] = useState<1 | 2>(1);
-    const [challenge, setChallenge] = useState<GuardianChallenge | null>(null);
+  const handleLoginSuccess = (nextChallenge: GuardianChallenge) => {
+    setChallenge(nextChallenge);
+    setTimerSeconds(45);
+    setCurrentStep(2);
+  };
 
-    // Timer state for resend OTP
-    const [timerSeconds, setTimerSeconds] = useState<number>(45);
+  const switchLanguage = () => {
+    router.replace(pathname, { locale: locale === "ar" ? "en" : "ar" });
+  };
 
-    // Handle countdown timer when step 2 is active
-    useEffect(() => {
-        if (currentStep !== 2) return;
-        const interval = setInterval(() => {
-            setTimerSeconds((seconds) => Math.max(seconds - 1, 0));
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [currentStep]);
-
-    // Handle step transition
-    const handleGoToStep = (step: 1 | 2) => {
-        setCurrentStep(step);
-        if (step === 2) {
-            setTimerSeconds(45);
-        }
-    };
-
-    const handleLoginSuccess = (otpChallenge: GuardianChallenge) => {
-        setChallenge(otpChallenge);
-        handleGoToStep(2);
-    };
-
-    return (
-        <div className="flex min-h-screen w-full flex-col justify-between bg-surface p-5 sm:p-8 lg:p-10">
-
-            {/* Top Bar: Mobile Logo & Language Toggle */}
-            <div className="flex items-center justify-between mb-8 lg:mb-4">
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-navy flex items-center justify-center text-white shadow-sm ring-2 ring-[#E6F2FF]">
-                            <GraduationCap className="w-5 h-5 text-[#F5A623]" />
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-xl font-black text-[#0A2540] tracking-tight">{t('brandName')}</span>
-                                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-[#E6F2FF] text-[#0077C6] rounded-md border border-blue-200">NEIS</span>
-                            </div>
-                            <p className="text-[11px] text-[#64748B] leading-none mt-0.5">{t("schoolName")}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => router.replace(pathname, { locale: locale === 'ar' ? 'en' : 'ar' })}
-                        aria-label={t('switchLanguage')}
-                        className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-[#0077C6]/40 bg-white text-xs font-bold text-[#0F172A] hover:text-[#0077C6] transition-all shadow-sm"
-                    >
-                        <GlobeIcon className="w-3.5 h-3.5 text-[#64748B]" />
-                        <span>{locale === 'ar' ? t('english') : t('arabic')}</span>
-                    </button>
-                </div>
+  return (
+    <section className="flex min-h-screen w-full flex-col bg-surface px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
+      <header className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-navy text-white">
+            <GraduationCap size={21} aria-hidden="true" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-lg font-bold tracking-tight text-navy">{t("brandName")}</span>
+              <span className="rounded border border-line bg-soft px-1.5 py-0.5 text-[10px] font-bold text-brand">NEIS</span>
             </div>
-
-            {/* Main Form Container */}
-            <div className="w-full mx-auto my-auto py-2">
-
-                {/* Badge & Step Header */}
-                <div className="text-start mb-6">
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0A2540] tracking-tight">
-                        {t('loginTitle')}
-                    </h1>
-                    <p className="text-sm text-[#64748B] mt-2">
-                        {currentStep === 1
-                            ? t('nationalIdDescription')
-                            : t('otpDescription')}
-                    </p>
-                </div>
-
-                {/* Multi-Step Switcher Indicator */}
-                {/* <div className="flex items-center gap-2 p-1.5 mb-7 rounded-xl bg-slate-100/90 border border-slate-200 text-xs font-bold">
-                    <button
-                        type="button"
-                        onClick={() => handleGoToStep(1)}
-                        className={`cursor-pointer flex-1 py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 font-bold ${currentStep === 1
-                            ? 'bg-white text-[#0A2540] shadow-sm'
-                            : 'text-[#64748B] hover:text-[#0F172A]'
-                            }`}
-                    >
-                        <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center font-mono ${currentStep === 1 ? 'bg-[#0A2540] text-white' : 'bg-slate-300 text-slate-600'
-                            }`}>1</span>
-                        <span>{t('nationalIdStep')}</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={() => handleGoToStep(2)}
-                        className={`cursor-pointer flex-1 py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 font-bold ${currentStep === 2
-                            ? 'bg-white text-[#0A2540] shadow-sm'
-                            : 'text-[#64748B] hover:text-[#0F172A]'
-                            }`}
-                    >
-                        <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center font-mono ${currentStep === 2 ? 'bg-[#F5A623] text-[#0A2540] font-bold' : 'bg-slate-300 text-slate-600'
-                            }`}>2</span>
-                        <span>{t('otpStep')}</span>
-                    </button>
-                </div> */}
-
-                {/* ============================================== */}
-                {/* STEP 1: NATIONAL ID ENTRY */}
-                {/* ============================================== */}
-                {currentStep === 1 && (
-                    <LoginPortal onLoginSuccess={handleLoginSuccess} />
-                )}
-
-                {/* ============================================== */}
-                {/* STEP 2: OTP VERIFICATION */}
-                {/* ============================================== */}
-                {currentStep === 2 && challenge && (
-                    <OTPVerification
-                        nationalId={challenge.nationalId}
-                        phone={challenge.phone}
-                        maskedPhone={challenge.maskedPhone}
-                        timerSeconds={timerSeconds}
-                        onOtpResent={(nextChallenge) => {
-                            setChallenge((current) => current
-                                ? { ...current, ...nextChallenge }
-                                : current);
-                            setTimerSeconds(45);
-                        }}
-                    />
-                )}
-
-            </div>
-
-            {/* Footer & Support Notice */}
-            <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
-                <div className="text-[11px] text-slate-400 font-mono">
-                    {t('footer')}
-                </div>
-            </div>
-
+            <p className="mt-0.5 text-xs text-mute">{t("schoolName")}</p>
+          </div>
         </div>
-    )
-}
+        <button
+          type="button"
+          onClick={switchLanguage}
+          aria-label={t("switchLanguage")}
+          className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm font-semibold text-ink transition-colors hover:border-brand hover:text-brand"
+        >
+          <Globe2 size={17} aria-hidden="true" />
+          <span>{locale === "ar" ? t("english") : t("arabic")}</span>
+        </button>
+      </header>
 
-export default AuthenticationComponent
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center py-10">
+        <div className="mb-7">
+          <h1 className="text-2xl font-bold tracking-tight text-navy sm:text-3xl">{t("loginTitle")}</h1>
+          <p className="mt-2 text-sm leading-6 text-mute">
+            {currentStep === 1 ? t("nationalIdDescription") : t("otpDescription")}
+          </p>
+        </div>
+
+        {currentStep === 1 && <LoginPortal onLoginSuccess={handleLoginSuccess} />}
+
+        {currentStep === 2 && challenge && (
+          <OTPVerification
+            nationalId={challenge.nationalId}
+            phone={challenge.phone}
+            maskedPhone={challenge.maskedPhone}
+            timerSeconds={timerSeconds}
+            onOtpResent={(nextChallenge) => {
+              setChallenge((current) => current ? { ...current, ...nextChallenge } : current);
+              setTimerSeconds(45);
+            }}
+          />
+        )}
+      </div>
+
+      <footer className="border-t border-line pt-5 text-center text-xs text-mute sm:text-start">
+        {t("footer")}
+      </footer>
+    </section>
+  );
+};
+
+export default AuthenticationComponent;
