@@ -142,6 +142,22 @@ export function ParentHomeDashboard() {
           </div>
         </section>
 
+        {!loading && !loadError && student && (
+          <section className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-soft text-brand"><GraduationCap size={23} /></div>
+              <div className="min-w-0">
+                <p className="truncate text-lg font-extrabold">{studentName(student)}</p>
+                <p className="mt-1 text-sm text-mute">{isArabic ? student.grade : student.gradeEn}</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 sm:justify-end">
+              <span className="rounded-xl bg-soft px-3 py-2 text-xs font-bold text-brand">{t("gradeLabel")}: {isArabic ? student.grade : student.gradeEn}</span>
+              <span className="rounded-xl bg-bg px-3 py-2 text-xs font-bold text-mute">{t("classLabel")}: {isArabic ? student.className : student.classNameEn}</span>
+            </div>
+          </section>
+        )}
+
         {loading ? (
           <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label={t("loading")}>
             {[0, 1, 2].map((item) => <div key={item} className="h-36 animate-pulse rounded-2xl border border-line bg-surface" />)}
@@ -247,7 +263,6 @@ export function ParentHomeDashboard() {
 
             <footer className="mt-8 flex flex-col gap-2 border-t border-line py-5 text-center text-xs text-mute sm:flex-row sm:items-center sm:justify-between sm:text-start">
               <span>{t("footer")}</span>
-              <span className="inline-flex items-center justify-center gap-1.5"><ShieldCheck size={14} />{t("privacyLabel")}</span>
             </footer>
           </>
         )}
