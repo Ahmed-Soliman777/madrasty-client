@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
+
 const StaffLoginForm = () => {
 
     const t = useTranslations('auth');
@@ -22,7 +24,7 @@ const StaffLoginForm = () => {
         setLoading(true)
 
         try {
-            const res = await fetch(`http://localhost:5000/api/auth/staff/login`, {
+            const res = await fetch(`${API_BASE_URL}/api/auth/staff/login`, {
                 method: "POST",
                 body: JSON.stringify({
                     email: staffEmail,
@@ -41,8 +43,11 @@ const StaffLoginForm = () => {
                 return
             }
 
-            // alert(data.message)
-
+            if (!data.accessToken) {
+                alert(t('networkError'))
+                return
+            }
+            localStorage.setItem('accessToken', data.accessToken)
             router.replace('/staff')
         } catch (error) {
             console.error(error)
