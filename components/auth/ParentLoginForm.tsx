@@ -1,90 +1,87 @@
-import { ArrowLeft, IdCard, Info } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useState } from 'react';
+"use client";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5000';
+import { ArrowLeft, IdCard, Info } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
+const inputClass =
+  "h-12 w-full rounded-lg border border-line bg-bg pe-11 ps-4 text-sm text-ink transition-colors placeholder:text-mute focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 const ParentLoginForm = ({ onLoginSuccess }: ParentLoginFormProps) => {
-    const t = useTranslations('auth');
+  const t = useTranslations("auth");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [nationalId, setNationalId] = useState("");
 
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string>('');
-    const [nationalId, setNationalId] = useState<string>('');
+  const handlePortalSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const handlePortalSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-        setError('')
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/guardian/request-otp`, {
+        method: "POST",
+        body: JSON.stringify({ NationalId: nationalId }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = (await response.json()) as RequestOtpResponse;
 
-        try {
-            const res = await fetch(`${API_BASE_URL}/auth/guardian/request-otp`, {
-                method: "POST",
-                body: JSON.stringify({
-                    NationalId: nationalId
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
+      if (!response.ok) {
+        setError(t("requestOtpError"));
+        return;
+      }
 
-            const data = await res.json() as RequestOtpResponse;
+      onLoginSuccess({ nationalId, phone: data.phone, maskedPhone: data.maskedPhone });
+    } catch {
+      setError(t("networkError"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            if (!res.ok) {
-                setError(t('requestOtpError'))
-                return
-            }
-            onLoginSuccess({ nationalId, phone: data.phone, maskedPhone: data.maskedPhone });
+  return (
+    <form onSubmit={handlePortalSubmit} className="space-y-3">
+      <div>
+        <label htmlFor="nationalIdInput" className="mb-2 block text-sm font-semibold text-ink">
+          {t("nationalIdLabel")} <span className="text-bad" aria-hidden="true">*</span>
+        </label>
+        <div className="relative">
+          <IdCard className="pointer-events-none absolute inset-y-0 end-3.5 my-auto size-5 text-mute" aria-hidden="true" />
+          <input
+            type="text"
+            id="nationalIdInput"
+            autoComplete="off"
+            maxLength={14}
+            inputMode="numeric"
+            pattern="[0-9]{14}"
+            dir="ltr"
+            value={nationalId}
+            onChange={(event) => setNationalId(event.target.value.replace(/\D/g, "").slice(0, 14))}
+            placeholder={t("nationalIdPlaceholder")}
+            required
+            aria-describedby="national-id-help"
+            className={inputClass}
+          />
+        </div>
+        <p id="national-id-help" className="mt-2 flex items-start gap-1.5 text-xs leading-5 text-mute">
+          <Info className="mt-0.5 size-3.5 shrink-0 text-brand" aria-hidden="true" />
+          <span>{t("nationalIdHelp")}</span>
+        </p>
+      </div>
 
-        } catch {
-            setError(t('networkError'))
-        } finally {
-            setLoading(false)
-        }
+      {error && <p role="alert" className="rounded-lg bg-bad-bg px-3 py-2 text-sm text-bad">{error}</p>}
 
-    };
+      <button
+        type="submit"
+        disabled={loading || nationalId.length !== 14}
+        className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-lg bg-navy px-6 text-sm font-semibold text-white transition-colors hover:bg-brand focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <span>{loading ? t("confirmLoginButtonLoading") : t("sendOtp")}</span>
+        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
+      </button>
+    </form>
+  );
+};
 
-    return (
-        <form onSubmit={handlePortalSubmit}>
-            <div className="flex items-center justify-between mb-2">
-                <label htmlFor="nationalIdInput" className="block text-xs font-bold text-[#0F172A]">
-                    {t('nationalIdLabel')} <span className="text-rose-500">*</span>
-                </label>
-            </div>
-
-            <div className="relative">
-                <div className="absolute inset-y-0 inset-e-0 pe-3.5 flex items-center pointer-events-none text-[#64748B]">
-                    <IdCard className="w-5 h-5 text-slate-400" />
-                </div>
-
-                <input
-                    type="text"
-                    id="nationalIdInput"
-                    maxLength={14}
-                    inputMode="numeric"
-                    pattern="[0-9]{14}"
-                    value={nationalId}
-                    onChange={(e) => setNationalId(e.target.value.replace(/\D/g, '').slice(0, 14))}
-                    placeholder={t('nationalIdPlaceholder')}
-                    required
-                    className="w-full pe-11 ps-4 h-12 text-sm font-semibold tracking-wider font-mono text-[#0F172A] bg-slate-50/70 border border-[#E2E8F0] rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0077C6] focus:border-[#0077C6] transition-all"
-                />
-            </div>
-            {error && <p role="alert" className="mt-3 text-sm font-semibold text-rose-700">{error}</p>}
-            <p className="text-[11px] text-[#64748B] mt-1.5 flex items-center gap-1">
-                <Info className="w-3 h-3 text-[#0077C6]" />
-                <span>{t('nationalIdHelp')}</span>
-            </p>
-
-            <button
-                type="submit"
-                disabled={loading || nationalId.length !== 14}
-                className="w-full mt-8 h-12 px-6 rounded-xl bg-[#0A2540] hover:bg-[#061729] active:scale-[0.99] text-white text-sm font-bold flex items-center justify-center gap-2.5 shadow-[0_10px_25px_-5px_rgba(10,37,64,0.35)] transition-all group"
-            >
-                <span>{loading ? t('confirmLoginButtonLoading') : t('sendOtp')}</span>
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform rtl:rotate-180" />
-            </button>
-        </form>
-    )
-}
-
-export default ParentLoginForm
+export default ParentLoginForm;
