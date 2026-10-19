@@ -130,18 +130,36 @@
       "detail": "تفاعل استثنائي في حل المسائل: {active} من {total} طالباً"
     },
     "comms": {
-      "title": "سجل التواصل اليوم",
-      "now": "الآن",
-      "minutesAgo": "منذ {minutes} د",
-      "heading": {
-        "excellence": "شهادة تميز: {subject}",
-        "absence": "إشعار غياب: {subject}",
-        "homework": "واجب جديد: {subject}"
+      "title": "سجل التواصل",
+      "refresh": "تحديث",
+      "refreshing": "جارٍ التحديث...",
+      "filterStatus": "الحالة",
+      "allStatuses": "كل الحالات",
+      "loading": "جارٍ تحميل سجل التواصل...",
+      "empty": "لا توجد سجلات تواصل تطابق عوامل التصفية.",
+      "authError": "جلسة الدخول غير موجودة أو انتهت. سجّل الدخول مجددًا لعرض السجل.",
+      "loadError": "تعذر تحميل سجل التواصل. حاول التحديث.",
+      "absenceHeading": "إشعار غياب الطالب: {student}",
+      "homeworkHeading": "إشعار واجب: {title}",
+      "unknownStudent": "طالب",
+      "unknownHomework": "واجب",
+      "channelWhatsApp": "واتساب",
+      "attempts": "عدد المحاولات: {count}",
+      "sentAt": "وقت الإرسال {date}",
+      "failureReason": "تعذر إرسال الرسالة.",
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "صفحة {page} من {totalPages}",
+      "type": {
+        "STUDENT_ABSENT": "غياب طالب",
+        "HOMEWORK_ASSIGNED": "إسناد واجب"
       },
-      "meta": {
-        "excellence": "أُرسلت بطاقة شكر لولي الأمر",
-        "absence": "تم التسليم عبر SMS",
-        "homework": "أُرسل لأولياء الأمور"
+      "status": {
+        "PENDING": "قيد الانتظار",
+        "SENDING": "جارٍ الإرسال",
+        "SENT": "تم الإرسال",
+        "FAILED": "فشل الإرسال",
+        "CANCELLED": "أُلغي"
       }
     },
     "toast": {
