@@ -26,7 +26,7 @@ export function AttendanceBoard({ onLog }: { onLog: (kind: StaffCommsKind, stude
   };
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4" aria-labelledby="roster">
+    <section className="rounded-xl border border-line bg-surface p-4" aria-labelledby="roster">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2.5">
         <h2 id="roster" className="text-base font-bold">
           {t("attendance.title")} <span className="font-normal text-mute">· {t("attendance.rosterCount", { shown: students.length, total: students.length })}</span>
