@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 
-// بيانات العرض الابتدائية (UI فقط) — الأسماء من messages عن طريق الـ id
 const INITIAL: StaffStudent[] = [
   { id: "ahmed", status: "present", arrivedAt: "7:45", points: 15, starBehavior: true },
   { id: "omar", status: "present", arrivedAt: "7:50", points: 5 },

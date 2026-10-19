@@ -11,10 +11,10 @@
     "achievementPoints": "نقاط التميز",
     "homework": "الواجبات",
     "bus": "الحافلة",
-    "securityNotice": "البيانات محمية بأعلى معايير الأمن السيبراني لوزارة التربية والتعليم",
+    "securityNotice": "البيانات محمية بأعلى معايير الأمان",
     "nileStar": "نجم النيل {year}",
     "whatsappNotifications": "إشعارات فورية عبر WhatsApp",
-    "copyright": "وحدة شهادة النيل الدولية © {year}"
+    "copyright": "مدارس النيل المصرية الدولية © {year}"
   },
   "auth": {
     "brandName": "مَـدْرَسَـتِـي",
@@ -23,11 +23,9 @@
     "english": "English",
     "arabic": "العربية",
     "loginTitle": "تسجيل الدخول",
-    "nationalIdDescription": "أدخل الرقم القومي للطالب للمتابعة والوصول إلى تقارير الأداء والحضور.",
-    "otpDescription": "أدخل الرمز المكون من 6 أرقام المرسل عبر WhatsApp لتسجيل الدخول.",
     "nationalIdStep": "الرقم القومي",
     "otpStep": "رمز التحقق OTP",
-    "footer": "بوابة النيل v3.4 • NEIS Secure Portal",
+    "footer": "بوابة النيل v1.0 • NEIS Secure Portal",
     "studentPhotoAlt": "صورة الطالب",
     "studentName": "أحمد سليمان خليل",
     "active": "نشط",
@@ -63,25 +61,21 @@
     "resendOtp": "إعادة إرسال الرمز",
     "requestOtpError": "تعذر إرسال الرمز. تحقق من الرقم القومي وحاول مرة أخرى.",
     "verifyOtpError": "الرمز غير صحيح أو انتهت صلاحيته. تحقق منه وحاول مرة أخرى.",
-    "networkError": "تعذر الاتصال بالخادم. تحقق من اتصالك وحاول مرة أخرى."
+    "networkError": "تعذر الاتصال بالخادم. تحقق من اتصالك وحاول مرة أخرى.",
+    "logout": "تسجيل الخروج",
+    "staffLoginError": "تعذر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور ثم حاول مرة أخرى."
   },
   "teacherQuick": {
     "nav": {
       "ariaLabel": "القائمة الرئيسية",
       "brand": "NEIS · نظام المدرسة",
       "quickPortal": "بوابة المعلم السريعة",
-      "schedule": "الجدول والواجبات",
-      "grades": "سجل المتابعة والدرجات",
-      "messages": "الرسائل والتواصل",
-      "settings": "الإعدادات",
       "support": "الدعم الفني والأكاديمي",
       "version": "الإصدار v3.1"
     },
     "header": {
       "teacherName": "أ. محمد علي",
-      "subtitle": "معلم رياضيات · الصف الرابع الابتدائي / 1-أ",
-      "period": "الحصة الثالثة الآن",
-      "periodTime": "10:00 – 10:45 ص · الفصل 4/أ"
+      "subtitle": "معلم رياضيات · الصف الرابع الابتدائي / 1-أ"
     },
     "status": {
       "all": "الكل",
@@ -93,7 +87,6 @@
       "title": "سجل الطلاب",
       "rosterCount": "{shown} من {total}",
       "markAllPresent": "تسجيل حضور الفصل كاملاً",
-      "exportReport": "تصدير التقرير اليومي",
       "tab": "{label} ({count})",
       "statusOf": "حالة {name}",
       "starBehavior": "نجمة سلوك",
@@ -123,11 +116,6 @@
       "defaultNotes": "حل الأسئلة من 1 إلى 10 مع كتابة خطوات التفكير.",
       "send": "إرسال لأولياء الأمور",
       "cancel": "إلغاء"
-    },
-    "pulse": {
-      "title": "طاقة الفصل",
-      "veryActive": "نشط جداً",
-      "detail": "تفاعل استثنائي في حل المسائل: {active} من {total} طالباً"
     },
     "comms": {
       "title": "سجل التواصل",
@@ -166,7 +154,6 @@
       "statusChanged": "{name}: {status}",
       "pointsAwarded": "{reason} · {name}",
       "allPresent": "تم تسجيل حضور الفصل كاملاً",
-      "exporting": "جاري تجهيز التقرير اليومي…",
       "homeworkSent": "تم إرسال الواجب لجميع أولياء الأمور"
     },
     "students": {

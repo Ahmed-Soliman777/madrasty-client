@@ -1,119 +1,101 @@
-"use client"
+"use client";
 
-import { ArrowLeft, Lock, Mail } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { ArrowLeft, Lock, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
+import { useState } from "react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
+const inputClass =
+  "h-12 w-full rounded-lg border border-line bg-bg pe-11 ps-4 text-sm text-ink transition-colors placeholder:text-mute focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 const StaffLoginForm = () => {
+  const t = useTranslations("auth");
+  const [loading, setLoading] = useState(false);
+  const [staffEmail, setStaffEmail] = useState("");
+  const [staffPassword, setStaffPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-    const t = useTranslations('auth');
+  const handlePortalSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const [loading, setLoading] = useState<boolean>(false)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/staff/login`, {
+        method: "POST",
+        body: JSON.stringify({ email: staffEmail, password: staffPassword }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = (await response.json()) as { accessToken?: string };
 
-    const [staffEmail, setStaffEmail] = useState<string>("")
-    const [staffPassword, setStaffPassword] = useState<string>("")
+      if (!response.ok || !data.accessToken) {
+        setError(t("staffLoginError"));
+        return;
+      }
 
-    const router = useRouter()
+      window.localStorage.setItem("accessToken", data.accessToken);
+      router.replace("/staff");
+    } catch {
+      setError(t("networkError"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Form Submission handlers
-    const handlePortalSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
+  return (
+    <form onSubmit={handlePortalSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="staffEmailInput" className="mb-2 block text-sm font-semibold text-ink">
+          {t("emailLabel")} <span className="text-bad" aria-hidden="true">*</span>
+        </label>
+        <div className="relative">
+          <Mail className="pointer-events-none absolute inset-y-0 end-3.5 my-auto size-5 text-mute" aria-hidden="true" />
+          <input
+            type="email"
+            id="staffEmailInput"
+            autoComplete="username"
+            value={staffEmail}
+            onChange={(event) => setStaffEmail(event.target.value)}
+            placeholder={t("emailPlaceholder")}
+            required
+            className={inputClass}
+          />
+        </div>
+      </div>
 
-        try {
-            const res = await fetch(`${API_BASE_URL}/api/auth/staff/login`, {
-                method: "POST",
-                body: JSON.stringify({
-                    email: staffEmail,
-                    password: staffPassword
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
+      <div>
+        <label htmlFor="staffPasswordInput" className="mb-2 block text-sm font-semibold text-ink">
+          {t("passwordLabel")} <span className="text-bad" aria-hidden="true">*</span>
+        </label>
+        <div className="relative">
+          <Lock className="pointer-events-none absolute inset-y-0 end-3.5 my-auto size-5 text-mute" aria-hidden="true" />
+          <input
+            type="password"
+            id="staffPasswordInput"
+            autoComplete="current-password"
+            value={staffPassword}
+            onChange={(event) => setStaffPassword(event.target.value)}
+            placeholder={t("passwordPlaceholder")}
+            required
+            className={inputClass}
+          />
+        </div>
+      </div>
 
-            const data = await res.json()
+      {error && <p role="alert" className="rounded-lg bg-bad-bg px-3 py-2 text-sm text-bad">{error}</p>}
 
-            if (!res.ok) {
-                setLoading(false)
-                alert(data.message)
-                return
-            }
+      <button
+        type="submit"
+        disabled={loading}
+        className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-lg bg-navy px-6 text-sm font-semibold text-white transition-colors hover:bg-brand focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <span>{loading ? t("confirmLoginButtonLoading") : t("loginTitle")}</span>
+        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
+      </button>
+    </form>
+  );
+};
 
-            if (!data.accessToken) {
-                alert(t('networkError'))
-                return
-            }
-            localStorage.setItem('accessToken', data.accessToken)
-            router.replace('/staff')
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-
-    };
-
-    return (
-        <form onSubmit={handlePortalSubmit}>
-            <div className="flex items-center justify-between mb-2">
-                <label htmlFor="staffEmailInput" className="block text-xs font-bold text-[#0F172A]">
-                    {t('emailLabel')} <span className="text-rose-500">*</span>
-                </label>
-            </div>
-
-            <div className="relative">
-                <div className="absolute inset-y-0 inset-e-0 pe-3.5 flex items-center pointer-events-none text-[#64748B]">
-                    <Mail className="w-5 h-5 text-slate-400" />
-                </div>
-
-                <input
-                    type="email"
-                    id="staffEmailInput"
-                    value={staffEmail}
-                    onChange={(e) => setStaffEmail(e.target.value)}
-                    placeholder={t('emailPlaceholder')}
-                    required
-                    className="w-full pe-11 ps-4 h-12 text-sm font-semibold tracking-wider font-mono text-[#0F172A] bg-slate-50/70 border border-[#E2E8F0] rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0077C6] focus:border-[#0077C6] transition-all"
-                />
-
-            </div>
-
-            <div className="flex items-center justify-between mb-2 mt-4">
-                <label htmlFor="staffPasswordInput" className="block text-xs font-bold text-[#0F172A]">
-                    {t('passwordLabel')} <span className="text-rose-500">*</span>
-                </label>
-            </div>
-
-            <div className="relative">
-                <div className="absolute inset-y-0 inset-e-0 pe-3.5 flex items-center pointer-events-none text-[#64748B]">
-                    <Lock className="w-5 h-5 text-slate-400" />
-                </div>
-
-                <input
-                    type="password"
-                    id="staffPasswordInput"
-                    value={staffPassword}
-                    onChange={(e) => setStaffPassword(e.target.value)}
-                    placeholder={t('passwordPlaceholder')}
-                    required
-                    className="w-full pe-11 ps-4 h-12 text-sm font-semibold tracking-wider font-mono text-[#0F172A] bg-slate-50/70 border border-[#E2E8F0] rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0077C6] focus:border-[#0077C6] transition-all"
-                />
-
-            </div>
-
-            <button
-                type="submit"
-                className="w-full h-12 mt-8 px-6 rounded-xl bg-[#0A2540] hover:bg-[#061729] active:scale-[0.99] text-white text-sm font-bold flex items-center justify-center gap-2.5 shadow-[0_10px_25px_-5px_rgba(10,37,64,0.35)] transition-all group"
-            >
-                <span>{loading ? "loading" : t('loginTitle')}</span>
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform rtl:rotate-180" />
-            </button>
-        </form>
-    )
-}
-
-export default StaffLoginForm
+export default StaffLoginForm;

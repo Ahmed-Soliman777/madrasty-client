@@ -130,15 +130,15 @@ const OTPVerification = ({
         <form onSubmit={handleSubmit} className="space-y-6 transition-all duration-300">
 
             {/* WhatsApp Notice Banner */}
-            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-start gap-3 text-start">
-                <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+            <div className="p-3.5 rounded-xl bg-ok-bg border border-line flex items-start gap-3 text-start">
+                <div className="w-8 h-8 rounded-lg bg-ok text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
                     <MessageSquareCheck className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
-                    <p className="font-bold text-emerald-900 leading-tight">
+                    <p className="font-bold text-ok leading-tight">
                         {t('otpSentTitle')}
                     </p>
-                    <p className="text-emerald-700 mt-1 leading-relaxed">
+                    <p className="text-ok mt-1 leading-relaxed">
                         {t('otpSentDescription')} <span className="font-bold">WhatsApp</span> {t('toRegisteredNumber')} (<span className="font-mono font-bold" dir="ltr">{maskedPhone}</span>).
                     </p>
                 </div>
@@ -148,9 +148,9 @@ const OTPVerification = ({
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-bold text-[#0F172A]">
-                        {t('otpLabel')} <span className="text-rose-500">*</span>
+                        {t('otpLabel')} <span className="text-bad">*</span>
                     </label>
-                    <span className="text-[11px] font-semibold text-[#64748B]">{t('otpExpires')}</span>
+                    <span className="text-[11px] font-semibold text-mute">{t('otpExpires')}</span>
                 </div>
 
                 <div className="grid grid-cols-6 gap-2 sm:gap-3" dir="ltr">
@@ -168,23 +168,23 @@ const OTPVerification = ({
                             onChange={(event) => updateOtp(index, event.target.value)}
                             onPaste={handlePaste}
                             onKeyDown={(event) => handleKeyDown(index, event)}
-                            className="h-12 min-w-0 w-full text-center text-xl font-bold font-mono rounded-lg border border-slate-300 bg-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#0077C6]"
+                            className="h-12 min-w-0 w-full text-center text-xl font-bold font-mono rounded-lg border border-slate-300 bg-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-brand"
                         />
                     ))}
                 </div>
-                {error && <p role="alert" className="mt-3 text-sm font-semibold text-rose-700">{error}</p>}
+                {error && <p role="alert" className="mt-3 text-sm font-semibold text-bad">{error}</p>}
 
                 {/* Resend Timer */}
-                <div className="flex items-center justify-between text-xs mt-3 text-[#64748B] font-semibold">
+                <div className="flex items-center justify-between text-xs mt-3 text-mute font-semibold">
                     <div className="flex items-center gap-1.5 ">
-                        <Timer className="w-3.5 h-3.5 text-[#F5A623]" />
+                        <Timer className="w-3.5 h-3.5 text-warn" />
                         <span>{t('resendCountdown')}</span>
-                        <span id="resendTimer" className="font-mono font-bold text-[#0A2540] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                        <span id="resendTimer" className="font-mono font-bold text-navy bg-warn-bg px-2 py-0.5 rounded border border-line">
                             00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}
                         </span>
                     </div>
 
-                    <button type="button" onClick={() => void resendOtp()} disabled={timerSeconds > 0 || resending} className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 disabled:cursor-not-allowed disabled:text-slate-400">
+                    <button type="button" onClick={() => void resendOtp()} disabled={timerSeconds > 0 || resending} className="inline-flex items-center gap-1.5 text-xs font-bold text-ok hover:text-emerald-800 disabled:cursor-not-allowed disabled:text-slate-400">
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>{resending ? t('confirmLoginButtonLoading') : t('resendOtp')}</span>
                     </button>
@@ -195,9 +195,9 @@ const OTPVerification = ({
             <button
                 type="submit"
                 disabled={loading || otp.some((digit) => !digit)}
-                className="w-full h-12 px-6 rounded-xl bg-[#F5A623] hover:bg-[#E09415] active:scale-[0.99] text-[#0A2540] text-sm font-extrabold flex items-center justify-center gap-2 shadow-[0_10px_25px_-5px_rgba(245,166,35,0.4)] transition-all group"
+                className="w-full h-12 px-6 rounded-xl bg-brand hover:bg-navy text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
             >
-                <LockOpen className="w-4 h-4 text-[#0A2540]" />
+                <LockOpen className="w-4 h-4 text-white" />
                 <span>{loading ? t('confirmLoginButtonLoading') :  t('confirmLoginButton') }</span>
                 <Check className="w-4 h-4 mr-1" />
             </button>

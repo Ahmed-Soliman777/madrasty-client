@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 
-const field = "w-full rounded-xl border border-line bg-bg px-3 py-2";
+const field = "w-full rounded-lg border border-line bg-bg px-3 py-2 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 export function HomeworkComposer({ onSent }: { onSent: (title: string) => void }) {
   const t = useTranslations("teacherQuick.homework");
@@ -15,7 +15,7 @@ export function HomeworkComposer({ onSent }: { onSent: (title: string) => void }
   const set = (k: keyof typeof d) => (e: { target: { value: string } }) => setD({ ...d, [k]: e.target.value });
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
+    <section className="rounded-xl border border-line bg-surface p-4">
       <h2 className="mb-2 text-base font-bold">{t("title")}</h2>
       <label className="mt-2 block text-[13px] text-mute">{t("fieldTitle")}<input className={field} value={d.title} onChange={set("title")} /></label>
       <label className="mt-2 block text-[13px] text-mute">{t("fieldDue")}<input className={field} value={d.due} onChange={set("due")} /></label>
