@@ -1,4 +1,3 @@
-import type { AttendanceStatus } from "@/types/types";
 import type { ParentStudentData } from "@/data";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
@@ -131,7 +130,7 @@ export async function fetchComms(
   return (await response.json()) as CommunicationLogResponse;
 }
 
-export const saveStatus = async (_id: string, _s: AttendanceStatus) => {
+export const saveStatus = async (_id: string, _s: StaffAttendanceStatus) => {
   await wait();
 };
 export const sendHomework = async (_d: unknown) => {
