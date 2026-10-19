@@ -1,18 +1,40 @@
 "use client";
+
 import { useTranslations } from "next-intl";
 
-const ITEMS: { id: StaffAttendanceStatus; on: string }[] = [
-  { id: "present", on: "bg-ok-bg text-ok" },
-  { id: "late", on: "bg-warn-bg text-warn" },
-  { id: "absent", on: "bg-bad-bg text-bad" },
+const ITEMS: { id: StaffAttendanceStatus; activeClass: string }[] = [
+  { id: "present", activeClass: "bg-ok-bg text-ok" },
+  { id: "late", activeClass: "bg-warn-bg text-warn" },
+  { id: "absent", activeClass: "bg-bad-bg text-bad" },
 ];
 
-export function StatusSegment({ name, value, onChange }: { name: string; value: StaffAttendanceStatus; onChange: (s: StaffAttendanceStatus) => void }) {
+export function StatusSegment({
+  name,
+  value,
+  onChange,
+}: {
+  name: string;
+  value: StaffAttendanceStatus;
+  onChange: (status: StaffAttendanceStatus) => void;
+}) {
   const t = useTranslations("teacherQuick");
+
   return (
-    <div role="group" aria-label={t("attendance.statusOf", { name })} className="flex overflow-hidden rounded-xl border border-line [&>button+button]:border-s [&>button+button]:border-line">
-      {ITEMS.map((i) => (
-        <button key={i.id} aria-pressed={value === i.id} onClick={() => onChange(i.id)} className={`px-3.5 py-1.5 text-mute ${value === i.id ? `${i.on} font-bold` : ""}`}>{t(`status.${i.id}`)}</button>
+    <div
+      role="group"
+      aria-label={t("attendance.statusOf", { name })}
+      className="flex max-w-full overflow-hidden rounded-lg border border-line [&>button+button]:border-s [&>button+button]:border-line"
+    >
+      {ITEMS.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          aria-pressed={value === item.id}
+          onClick={() => onChange(item.id)}
+          className={`min-h-9 px-2.5 text-xs transition-colors sm:px-3 sm:text-sm ${value === item.id ? `${item.activeClass} font-semibold` : "text-mute hover:bg-bg hover:text-ink"}`}
+        >
+          {t(`status.${item.id}`)}
+        </button>
       ))}
     </div>
   );
