@@ -177,5 +177,48 @@
       "karim": "كريم سامي",
       "ziad": "زياد طارق"
     }
+  },
+  "parentHome": {
+    "schoolName": "مدارس النيل المصرية الدولية",
+    "brand": "مدرستي · بوابة ولي الأمر",
+    "switchLanguage": "تغيير اللغة",
+    "logout": "تسجيل الخروج",
+    "portalLabel": "بوابة ولي الأمر",
+    "welcome": "كل ما يخص يوم ابنك الدراسي، في مكان واحد.",
+    "description": "تابع سجلات الحضور والسلوك والواجبات المسجلة حاليًا للطالب.",
+    "selectStudent": "اختر الطالب",
+    "loading": "جارٍ تحميل بيانات الطالب",
+    "loadError": "تعذر تحميل بيانات الطالب.",
+    "retry": "حاول مرة أخرى",
+    "recentRecords": "السجلات الأخيرة",
+    "attendanceTitle": "سجلات الحضور",
+    "present": "حاضر",
+    "late": "متأخر",
+    "absent": "غائب",
+    "behaviorEntries": "{count, plural, =0 {لا توجد سجلات} one {سجل واحد} two {سجلان} few {# سجلات} many {# سجلًا} other {# سجل}}",
+    "behaviorTitle": "نقاط السلوك",
+    "behaviorPointsDescription": "إجمالي النقاط في سجلات السلوك المعروضة بالأسفل.",
+    "assignments": "{count, plural, =0 {لا توجد واجبات} one {واجب واحد} two {واجبان} few {# واجبات} many {# واجبًا} other {# واجب}}",
+    "homeworkTitle": "الواجبات",
+    "homeworkDescription": "الواجبات المسجلة لهذا الطالب.",
+    "attendanceHistory": "الحضور والغياب",
+    "attendanceSubtitle": "سجل الحضور المسجل",
+    "arrivalTime": "وقت الوصول: {time}",
+    "noArrivalTime": "لم يتم تسجيل وقت الوصول",
+    "noAttendance": "لا توجد سجلات حضور متاحة.",
+    "attendanceStatus": {
+      "PRESENT": "حاضر",
+      "LATE": "متأخر",
+      "ABSENT": "غائب"
+    },
+    "behaviorHistory": "السلوك",
+    "behaviorSubtitle": "سجلات السلوك الإيجابي والسلبي",
+    "noBehavior": "لا توجد سجلات سلوك متاحة.",
+    "homeworkHistory": "الواجبات",
+    "homeworkSubtitle": "الواجبات ومواعيد التسليم",
+    "dueDate": "موعد التسليم: {date}",
+    "noHomework": "لا توجد واجبات متاحة.",
+    "footer": "مدارس النيل المصرية الدولية",
+    "privacyLabel": "تُعرض بيانات الطالب لولي الأمر المسجل دخوله."
   }
 }
