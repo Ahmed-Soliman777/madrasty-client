@@ -1,8 +1,5 @@
+import { ParentHomeDashboard } from "@/features/parent-home/ParentHomeDashboard";
 
-const page = () => {
-  return (
-    <div>Welcome!</div>
-  )
+export default function ParentHomePage() {
+  return <ParentHomeDashboard />;
 }
-
-export default page
