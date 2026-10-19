@@ -219,6 +219,7 @@
     "dueDate": "Due {date}",
     "noHomework": "No homework assignments are available.",
     "footer": "Nile Egyptian International Schools",
-    "privacyLabel": "Student information is shown for the signed-in parent."
+    "gradeLabel": "Grade",
+    "classLabel": "Class"
   }
 }
