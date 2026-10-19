@@ -72,18 +72,12 @@
       "ariaLabel": "القائمة الرئيسية",
       "brand": "NEIS · نظام المدرسة",
       "quickPortal": "بوابة المعلم السريعة",
-      "schedule": "الجدول والواجبات",
-      "grades": "سجل المتابعة والدرجات",
-      "messages": "الرسائل والتواصل",
-      "settings": "الإعدادات",
       "support": "الدعم الفني والأكاديمي",
       "version": "الإصدار v3.1"
     },
     "header": {
       "teacherName": "أ. محمد علي",
-      "subtitle": "معلم رياضيات · الصف الرابع الابتدائي / 1-أ",
-      "period": "الحصة الثالثة الآن",
-      "periodTime": "10:00 – 10:45 ص · الفصل 4/أ"
+      "subtitle": "معلم رياضيات · الصف الرابع الابتدائي / 1-أ"
     },
     "status": {
       "all": "الكل",
@@ -95,7 +89,6 @@
       "title": "سجل الطلاب",
       "rosterCount": "{shown} من {total}",
       "markAllPresent": "تسجيل حضور الفصل كاملاً",
-      "exportReport": "تصدير التقرير اليومي",
       "tab": "{label} ({count})",
       "statusOf": "حالة {name}",
       "starBehavior": "نجمة سلوك",
@@ -163,7 +156,6 @@
       "statusChanged": "{name}: {status}",
       "pointsAwarded": "{reason} · {name}",
       "allPresent": "تم تسجيل حضور الفصل كاملاً",
-      "exporting": "جاري تجهيز التقرير اليومي…",
       "homeworkSent": "تم إرسال الواجب لجميع أولياء الأمور"
     },
     "students": {
