@@ -8,7 +8,6 @@ import { useAttendance } from "./useAttendance";
 import { StudentRow } from "./StudentRow";
 
 type Filter = "all" | StaffAttendanceStatus;
-const TOTAL_STUDENTS = 28;
 const FILTERS: Filter[] = ["all", "present", "late", "absent"];
 
 export function AttendanceBoard({ onLog }: { onLog: (kind: StaffCommsKind, studentId: StaffStudentId) => void }) {
@@ -30,13 +29,12 @@ export function AttendanceBoard({ onLog }: { onLog: (kind: StaffCommsKind, stude
     <section className="rounded-2xl border border-line bg-surface p-4" aria-labelledby="roster">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2.5">
         <h2 id="roster" className="text-base font-bold">
-          {t("attendance.title")} <span className="font-normal text-mute">· {t("attendance.rosterCount", { shown: students.length, total: TOTAL_STUDENTS })}</span>
+          {t("attendance.title")} <span className="font-normal text-mute">· {t("attendance.rosterCount", { shown: students.length, total: students.length })}</span>
         </h2>
         <Button onClick={() => { markAllPresent(); toast(t("toast.allPresent")); }}>{t("attendance.markAllPresent")}</Button>
       </div>
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2.5">
+      <div className="mb-3">
         <Tabs items={tabs} value={filter} onChange={setFilter} />
-        <Button variant="ghost" onClick={() => toast(t("toast.exporting"))}>{t("attendance.exportReport")}</Button>
       </div>
       {students.filter((s) => filter === "all" || s.status === filter).map((s) => (
         <StudentRow
