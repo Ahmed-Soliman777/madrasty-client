@@ -10,7 +10,7 @@ import { StudentRow } from "./StudentRow";
 type Filter = "all" | StaffAttendanceStatus;
 const FILTERS: Filter[] = ["all", "present", "late", "absent"];
 
-export function AttendanceBoard({ onLog }: { onLog: (kind: StaffCommsKind, studentId: StaffStudentId) => void }) {
+export function AttendanceBoard() {
   const t = useTranslations("teacherQuick");
   const toast = useToast();
   const { students, setStatus, addPoints, markAllPresent } = useAttendance();
@@ -22,7 +22,6 @@ export function AttendanceBoard({ onLog }: { onLog: (kind: StaffCommsKind, stude
   const changeStatus = (id: StaffStudentId, status: StaffAttendanceStatus) => {
     setStatus(id, status);
     toast(t("toast.statusChanged", { name: t(`students.${id}`), status: t(`status.${status}`) }));
-    if (status === "absent") onLog("absence", id);
   };
 
   return (
