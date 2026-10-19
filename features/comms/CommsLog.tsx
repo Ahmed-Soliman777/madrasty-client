@@ -75,7 +75,7 @@ export function CommsLog() {
   };
 
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
+    <section className="rounded-xl border border-line bg-surface p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-bold">{t("title")}</h2>
         <button
@@ -97,7 +97,7 @@ export function CommsLog() {
             setPage(1);
             setStatus(event.target.value as NotificationStatus | "");
           }}
-          className="min-w-0 rounded-lg border border-line bg-bg px-2 py-1.5 text-main"
+          className="min-w-0 rounded-lg border border-line bg-bg px-2 py-1.5 text-ink"
         >
           {statuses.map((value) => (
             <option key={value || "ALL"} value={value}>
@@ -108,7 +108,7 @@ export function CommsLog() {
       </label>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
+        <p role="alert" className="rounded-lg bg-bad-bg px-3 py-2 text-sm text-bad">
           {error === "auth" ? t("authError") : t("loadError")}
         </p>
       )}
@@ -126,12 +126,12 @@ export function CommsLog() {
                 <span
                   className={`rounded-full px-2 py-1 text-xs font-semibold ${
                     item.status === "SENT"
-                      ? "bg-emerald-100 text-emerald-800"
+                      ? "bg-ok-bg text-ok"
                       : item.status === "FAILED"
-                        ? "bg-rose-100 text-rose-800"
+                        ? "bg-bad-bg text-bad"
                         : item.status === "CANCELLED"
-                          ? "bg-slate-100 text-slate-700"
-                          : "bg-amber-100 text-amber-800"
+                          ? "bg-bg text-mute"
+                          : "bg-warn-bg text-warn"
                   }`}
                 >
                   {t(`status.${item.status}`)}
