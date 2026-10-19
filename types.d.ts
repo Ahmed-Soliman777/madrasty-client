@@ -53,7 +53,7 @@ declare global {
   }
 
   interface RequestOtpResponse {
-    message?: string;
+    message: string;
     phone: string;
     maskedPhone: string;
   }
