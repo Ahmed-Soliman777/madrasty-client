@@ -108,7 +108,7 @@ export function ParentHomeDashboard() {
               <Globe2 size={17} />
               <span>{isArabic ? "EN" : "عربي"}</span>
             </button>
-            <button type="button" onClick={logout} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm font-semibold text-mute transition hover:border-bad hover:bg-bad-bg hover:text-bad">
+            <button type="button" onClick={logout} aria-label={t("logout")} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm font-semibold text-mute transition hover:border-bad hover:bg-bad-bg hover:text-bad">
               <LogOut size={17} />
               <span className="hidden sm:inline">{t("logout")}</span>
             </button>
@@ -148,7 +148,6 @@ export function ParentHomeDashboard() {
               <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-soft text-brand"><GraduationCap size={23} /></div>
               <div className="min-w-0">
                 <p className="truncate text-lg font-extrabold">{studentName(student)}</p>
-                <p className="mt-1 text-sm text-mute">{isArabic ? student.grade : student.gradeEn}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2 sm:justify-end">
