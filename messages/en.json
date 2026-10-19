@@ -72,18 +72,12 @@
       "ariaLabel": "Main navigation",
       "brand": "NEIS · School System",
       "quickPortal": "Teacher Quick Portal",
-      "schedule": "Schedule & Homework",
-      "grades": "Tracking & Grades",
-      "messages": "Messages",
-      "settings": "Settings",
       "support": "Technical & Academic Support",
       "version": "Version v3.1"
     },
     "header": {
       "teacherName": "Mr. Mohamed Ali",
-      "subtitle": "Math Teacher · Grade 4 Primary / 1-A",
-      "period": "Period 3 is live",
-      "periodTime": "10:00 – 10:45 AM · Class 4/A"
+      "subtitle": "Math Teacher · Grade 4 Primary / 1-A"
     },
     "status": {
       "all": "All",
@@ -95,7 +89,6 @@
       "title": "Student roster",
       "rosterCount": "{shown} of {total}",
       "markAllPresent": "Mark whole class present",
-      "exportReport": "Export daily report",
       "tab": "{label} ({count})",
       "statusOf": "{name}'s status",
       "starBehavior": "Behavior star",
@@ -163,7 +156,6 @@
       "statusChanged": "{name}: {status}",
       "pointsAwarded": "{reason} · {name}",
       "allPresent": "Whole class marked present",
-      "exporting": "Preparing the daily report…",
       "homeworkSent": "Homework sent to all parents"
     },
     "students": {
