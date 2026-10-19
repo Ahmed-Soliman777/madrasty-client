@@ -43,13 +43,13 @@ const AuthenticationComponent = () => {
     };
 
     return (
-        <div className="w-full lg:w-[54%] xl:w-[50%] flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-white min-h-screen z-10 shadow-lg lg:shadow-none">
+        <div className="flex min-h-screen w-full flex-col justify-between bg-surface p-5 sm:p-8 lg:p-10">
 
             {/* Top Bar: Mobile Logo & Language Toggle */}
             <div className="flex items-center justify-between mb-8 lg:mb-4">
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-linear-to-tr from-[#0A2540] to-[#0077C6] flex items-center justify-center text-white shadow-sm ring-2 ring-[#E6F2FF]">
+                        <div className="w-10 h-10 rounded-xl bg-navy flex items-center justify-center text-white shadow-sm ring-2 ring-[#E6F2FF]">
                             <GraduationCap className="w-5 h-5 text-[#F5A623]" />
                         </div>
                         <div>
