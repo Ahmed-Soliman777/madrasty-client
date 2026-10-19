@@ -168,7 +168,7 @@ const OTPVerification = ({
                             onChange={(event) => updateOtp(index, event.target.value)}
                             onPaste={handlePaste}
                             onKeyDown={(event) => handleKeyDown(index, event)}
-                            className="h-12 min-w-0 w-full text-center text-xl font-bold font-mono rounded-lg border border-slate-300 bg-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#0077C6]"
+                            className="h-12 min-w-0 w-full text-center text-xl font-bold font-mono rounded-lg border border-slate-300 bg-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-brand"
                         />
                     ))}
                 </div>
@@ -179,7 +179,7 @@ const OTPVerification = ({
                     <div className="flex items-center gap-1.5 ">
                         <Timer className="w-3.5 h-3.5 text-warn" />
                         <span>{t('resendCountdown')}</span>
-                        <span id="resendTimer" className="font-mono font-bold text-[#0A2540] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                        <span id="resendTimer" className="font-mono font-bold text-navy bg-warn-bg px-2 py-0.5 rounded border border-line">
                             00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}
                         </span>
                     </div>
@@ -197,7 +197,7 @@ const OTPVerification = ({
                 disabled={loading || otp.some((digit) => !digit)}
                 className="w-full h-12 px-6 rounded-xl bg-brand hover:bg-navy text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
             >
-                <LockOpen className="w-4 h-4 text-[#0A2540]" />
+                <LockOpen className="w-4 h-4 text-white" />
                 <span>{loading ? t('confirmLoginButtonLoading') :  t('confirmLoginButton') }</span>
                 <Check className="w-4 h-4 mr-1" />
             </button>
