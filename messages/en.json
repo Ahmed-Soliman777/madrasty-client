@@ -126,11 +126,6 @@
       "send": "Send to parents",
       "cancel": "Cancel"
     },
-    "pulse": {
-      "title": "Class energy",
-      "veryActive": "Very active",
-      "detail": "Outstanding engagement in problem solving: {active} of {total} students"
-    },
     "comms": {
       "title": "Communication log",
       "refresh": "Refresh",
