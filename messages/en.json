@@ -130,18 +130,36 @@
       "detail": "Outstanding engagement in problem solving: {active} of {total} students"
     },
     "comms": {
-      "title": "Today's communication log",
-      "now": "Just now",
-      "minutesAgo": "{minutes}m ago",
-      "heading": {
-        "excellence": "Excellence certificate: {subject}",
-        "absence": "Absence notice: {subject}",
-        "homework": "New homework: {subject}"
+      "title": "Communication log",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing...",
+      "filterStatus": "Status",
+      "allStatuses": "All statuses",
+      "loading": "Loading communication history...",
+      "empty": "No communication records match these filters.",
+      "authError": "Your session is missing or expired. Sign in again to view this log.",
+      "loadError": "Unable to load the communication log. Try refreshing.",
+      "absenceHeading": "Absence notice for {student}",
+      "homeworkHeading": "Homework notification: {title}",
+      "unknownStudent": "Student",
+      "unknownHomework": "Homework",
+      "channelWhatsApp": "WhatsApp",
+      "attempts": "Attempts: {count}",
+      "sentAt": "Sent at {date}",
+      "failureReason": "The message could not be sent.",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page} of {totalPages}",
+      "type": {
+        "STUDENT_ABSENT": "Student absence",
+        "HOMEWORK_ASSIGNED": "Homework assigned"
       },
-      "meta": {
-        "excellence": "Thank-you card sent to parent",
-        "absence": "Delivered via SMS",
-        "homework": "Sent to parents"
+      "status": {
+        "PENDING": "Pending",
+        "SENDING": "Sending",
+        "SENT": "Sent",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled"
       }
     },
     "toast": {
