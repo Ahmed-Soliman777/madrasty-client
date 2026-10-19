@@ -11,10 +11,10 @@
     "achievementPoints": "نقاط التميز",
     "homework": "الواجبات",
     "bus": "الحافلة",
-    "securityNotice": "البيانات محمية بأعلى معايير الأمن السيبراني لوزارة التربية والتعليم",
+    "securityNotice": "البيانات محمية بأعلى معايير الأمان",
     "nileStar": "نجم النيل {year}",
     "whatsappNotifications": "إشعارات فورية عبر WhatsApp",
-    "copyright": "وحدة شهادة النيل الدولية © {year}"
+    "copyright": "مدارس النيل المصرية الدولية © {year}"
   },
   "auth": {
     "brandName": "مَـدْرَسَـتِـي",
@@ -23,11 +23,9 @@
     "english": "English",
     "arabic": "العربية",
     "loginTitle": "تسجيل الدخول",
-    "nationalIdDescription": "أدخل الرقم القومي للطالب للمتابعة والوصول إلى تقارير الأداء والحضور.",
-    "otpDescription": "أدخل الرمز المكون من 6 أرقام المرسل عبر WhatsApp لتسجيل الدخول.",
     "nationalIdStep": "الرقم القومي",
     "otpStep": "رمز التحقق OTP",
-    "footer": "بوابة النيل v3.4 • NEIS Secure Portal",
+    "footer": "بوابة النيل v1.0 • NEIS Secure Portal",
     "studentPhotoAlt": "صورة الطالب",
     "studentName": "أحمد سليمان خليل",
     "active": "نشط",

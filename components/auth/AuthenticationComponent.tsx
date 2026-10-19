@@ -34,6 +34,7 @@ const AuthenticationComponent = () => {
     router.replace(pathname, { locale: locale === "ar" ? "en" : "ar" });
   };
 
+  console.log(currentStep)
   return (
     <section className="flex min-h-screen w-full flex-col bg-surface px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
       <header className="flex items-center justify-between gap-3">
@@ -46,7 +47,7 @@ const AuthenticationComponent = () => {
               <span className="text-lg font-bold tracking-tight text-navy">{t("brandName")}</span>
               <span className="rounded border border-line bg-soft px-1.5 py-0.5 text-[10px] font-bold text-brand">NEIS</span>
             </div>
-            <p className="mt-0.5 text-xs text-mute">{t("schoolName")}</p>
+            <p className="mt-0.5 text-xs text-mute hidden lg:block">{t("schoolName")}</p>
           </div>
         </div>
         <button
@@ -61,12 +62,8 @@ const AuthenticationComponent = () => {
       </header>
 
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center py-10">
-        <div className="mb-7">
-          <h1 className="text-2xl font-bold tracking-tight text-navy sm:text-3xl">{t("loginTitle")}</h1>
-          <p className="mt-2 text-sm leading-6 text-mute">
-            {currentStep === 1 ? t("nationalIdDescription") : t("otpDescription")}
-          </p>
-        </div>
+
+        <h1 className="mb-7 text-2xl font-bold tracking-tight text-navy sm:text-3xl">{t("loginTitle")}</h1>
 
         {currentStep === 1 && <LoginPortal onLoginSuccess={handleLoginSuccess} />}
 

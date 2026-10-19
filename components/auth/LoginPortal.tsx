@@ -22,7 +22,7 @@ const LoginPortal = ({ onLoginSuccess }: LoginPortalProps) => {
 
       <fieldset>
         <legend className="mb-2.5 text-sm font-semibold text-ink">{t("loginAs")}</legend>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           <label
             className={`flex min-h-12 cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-3 transition-colors ${selectedRole === "parent" ? "border-brand bg-soft" : "border-line bg-surface hover:border-brand"}`}
           >

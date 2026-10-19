@@ -11,10 +11,10 @@
     "achievementPoints": "Achievement points",
     "homework": "Assignments",
     "bus": "School bus",
-    "securityNotice": "Your information is protected to the highest Ministry of Education cybersecurity standards.",
+    "securityNotice": "Your information is protected.",
     "nileStar": "Nile Star {year}",
     "whatsappNotifications": "Instant WhatsApp notifications",
-    "copyright": "Nile International Certificate Unit © {year}"
+    "copyright": "Nile Egyptian International Schools © {year}"
   },
   "auth": {
     "brandName": "Madrasaty",
@@ -23,11 +23,9 @@
     "english": "English",
     "arabic": "العربية",
     "loginTitle": "Sign in",
-    "nationalIdDescription": "Enter the student's national ID to view performance and attendance reports.",
-    "otpDescription": "Enter the 6-digit code sent to your WhatsApp to sign in.",
     "nationalIdStep": "National ID",
     "otpStep": "Verification code (OTP)",
-    "footer": "Nile Portal v3.4 • NEIS Secure Portal",
+    "footer": "Nile Portal v1.0 • NEIS Secure Portal",
     "studentPhotoAlt": "Student photo",
     "studentName": "Ahmed Suleiman Khalil",
     "active": "Active",

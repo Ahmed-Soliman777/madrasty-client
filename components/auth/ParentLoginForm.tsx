@@ -47,7 +47,7 @@ const ParentLoginForm = ({ onLoginSuccess }: ParentLoginFormProps) => {
           {t("nationalIdLabel")} <span className="text-bad" aria-hidden="true">*</span>
         </label>
         <div className="relative">
-          <IdCard className="pointer-events-none absolute inset-y-0 end-3.5 my-auto size-5 text-mute" aria-hidden="true" />
+          <IdCard className="pointer-events-none absolute inset-y-0 inset-e-3.5 my-auto size-5 text-mute" aria-hidden="true" />
           <input
             type="text"
             id="nationalIdInput"
@@ -55,7 +55,6 @@ const ParentLoginForm = ({ onLoginSuccess }: ParentLoginFormProps) => {
             maxLength={14}
             inputMode="numeric"
             pattern="[0-9]{14}"
-            dir="ltr"
             value={nationalId}
             onChange={(event) => setNationalId(event.target.value.replace(/\D/g, "").slice(0, 14))}
             placeholder={t("nationalIdPlaceholder")}
