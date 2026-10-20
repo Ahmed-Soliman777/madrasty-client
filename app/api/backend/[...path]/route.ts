@@ -38,7 +38,8 @@ async function forward(request: Request, context: RouteContext) {
       },
     });
     if (upstream.status === 401) {
-      response.headers.append("Set-Cookie", "accessToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
+      const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+      response.headers.append("Set-Cookie", `accessToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`);
     }
     return response;
   } catch {
