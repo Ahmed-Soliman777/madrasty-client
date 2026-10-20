@@ -114,6 +114,10 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
       | null;
 
     if (!response.ok) {
+      if (response.status === 401 && typeof window !== "undefined") {
+        void fetch("/api/auth/logout", { method: "POST" });
+        window.location.assign("/");
+      }
       const body = payload as { message?: string | string[]; code?: string } | null;
       const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
       throw new ApiError(message ?? "Request failed", response.status, body?.code);
