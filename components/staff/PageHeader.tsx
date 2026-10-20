@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { logout as clearSession } from "@/lib/api";
 
-export function PageHeader() {
+export function PageHeader({ role = "teacher" }: { role?: "teacher" | "admin" }) {
   const t = useTranslations("teacherQuick.header");
   const auth = useTranslations("auth");
   const locale = useLocale();
@@ -27,8 +27,8 @@ export function PageHeader() {
   return (
     <header className="mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-navy">{t("teacherName")}</h1>
-        <p className="mt-1 text-sm text-mute">{t("subtitle")}</p>
+        <h1 className="text-2xl font-bold tracking-tight text-navy">{role === "admin" ? t("adminName") : t("teacherName")}</h1>
+        <p className="mt-1 text-sm text-mute">{role === "admin" ? t("adminSubtitle") : t("subtitle")}</p>
       </div>
       <div className="flex items-center gap-2">
         <button
