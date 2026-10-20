@@ -63,7 +63,7 @@ export async function proxy(request: NextRequest) {
       if (user.type === "guardian") {
         return NextResponse.redirect(new URL(`/${locale}/home`, request.url));
       }
-      if (user.type === "staff" && user.role === "TEACHER") {
+      if (user.type === "staff" && (user.role === "TEACHER" || user.role === "SCHOOL_ADMIN")) {
         return NextResponse.redirect(new URL(`/${locale}/staff`, request.url));
       }
     }
@@ -72,7 +72,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(`/${locale}/staff`, request.url));
     }
 
-    if (isStaffPage && (user.type !== "staff" || user.role !== "TEACHER")) {
+    if (isStaffPage && (user.type !== "staff" || !["TEACHER", "SCHOOL_ADMIN"].includes(user.role))) {
       return NextResponse.redirect(new URL(`/${locale}`, request.url));
     }
   }
