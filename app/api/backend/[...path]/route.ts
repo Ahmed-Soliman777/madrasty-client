@@ -7,6 +7,12 @@ type RouteContext = { params: Promise<{ path: string[] }> };
 
 async function forward(request: Request, context: RouteContext) {
   try {
+    const origin = request.headers.get("origin");
+    const requestOrigin = new URL(request.url).origin;
+    if (origin && origin !== requestOrigin && !["GET", "HEAD", "OPTIONS"].includes(request.method)) {
+      return NextResponse.json({ code: "ORIGIN_NOT_ALLOWED", message: "Cross-origin request rejected" }, { status: 403 });
+    }
+
     const token = (await cookies()).get("accessToken")?.value;
     if (!token) {
       return NextResponse.json({ code: "AUTH_TOKEN_MISSING", message: "Authentication required" }, { status: 401 });
