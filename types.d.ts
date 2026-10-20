@@ -48,7 +48,7 @@ declare global {
 
   interface VerifyOtpResponse {
     message: string;
-    accessToken: string;
+    authenticated: boolean;
     guardian: Record<string, unknown>;
   }
 
@@ -72,32 +72,7 @@ declare global {
     onLoginSuccess: (challenge: GuardianChallenge) => void;
   }
 
-  type StaffAttendanceStatus = "present" | "late" | "absent";
-  type StaffStudentId = "ahmed" | "omar" | "yasser" | "fahd" | "karim" | "ziad";
-  type StaffPointId = "participation" | "homework" | "distraction";
-  type StaffCommsKind = "excellence" | "absence" | "homework";
   type StaffNavId = "quickPortal";
-
-  interface StaffStudent {
-    id: StaffStudentId;
-    status: StaffAttendanceStatus;
-    arrivedAt?: string;
-    points: number;
-    starBehavior?: boolean;
-  }
-
-  interface StaffPointAction {
-    id: StaffPointId;
-    delta: number;
-  }
-
-  interface StaffCommsItem {
-    id: string;
-    kind: StaffCommsKind;
-    studentId?: StaffStudentId;
-    text?: string;
-    minutesAgo: number;
-  }
 
   interface StaffNavItem {
     id: StaffNavId;
