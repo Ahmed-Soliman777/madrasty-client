@@ -63,7 +63,8 @@
     "verifyOtpError": "That code is invalid or expired. Check it and try again.",
     "networkError": "Unable to reach the server. Check your connection and try again.",
     "logout": "Log out",
-    "staffLoginError": "Unable to sign in. Check your email and password, then try again."
+    "staffLoginError": "Unable to sign in. Check your email and password, then try again.",
+    "staffPortalUnavailable": "Signed in successfully, but the currently available dashboard is for teachers only."
   },
   "teacherQuick": {
     "nav": {
@@ -71,11 +72,14 @@
       "brand": "NEIS · School System",
       "quickPortal": "Teacher Quick Portal",
       "support": "Technical & Academic Support",
-      "version": "Version v3.1"
+      "version": "Version v3.1",
+      "adminPortal": "Administration portal"
     },
     "header": {
-      "teacherName": "Mr. Mohamed Ali",
-      "subtitle": "Math Teacher · Grade 4 Primary / 1-A"
+      "teacherName": "Teacher portal",
+      "subtitle": "Attendance, behavior, homework and communication log",
+      "adminName": "School administration",
+      "adminSubtitle": "Review school communication and notification delivery"
     },
     "status": {
       "all": "All",
@@ -163,6 +167,45 @@
       "fahd": "Fahd Abdullah",
       "karim": "Karim Sami",
       "ziad": "Ziad Tarek"
+    },
+    "integration": {
+      "loading": "Loading teacher data...",
+      "loadError": "Unable to load teacher data. Check your connection and try again.",
+      "retry": "Retry",
+      "noLessons": "You have no scheduled lessons today.",
+      "lesson": "Lesson",
+      "teacher": "Teacher",
+      "attendanceSaved": "Attendance saved to the database.",
+      "attendanceSubmitted": "Attendance submitted and absence notifications queued.",
+      "saveError": "Unable to save this change. The operation was not confirmed.",
+      "sessionSubmitted": "Attendance has been submitted and can no longer be edited.",
+      "behaviorCategories": "Record behavior",
+      "homeworkAssignment": "Class and subject",
+      "chooseAssignment": "Choose class and subject",
+      "dueAt": "Due date and time",
+      "notes": "Notes",
+      "notifyGuardians": "Notify guardians via WhatsApp",
+      "createHomework": "Save homework and queue notifications",
+      "homeworkCreated": "Homework saved. Notifications queued: {count}",
+      "homeworkError": "Unable to save homework. Check the fields and due date.",
+      "noAssignments": "There are no active teaching assignments for homework.",
+      "submitAttendance": "Submit attendance",
+      "saveAttendance": "Save attendance",
+      "markAllPresent": "Mark everyone present",
+      "selectLesson": "Choose a lesson",
+      "present": "Present",
+      "late": "Late",
+      "absent": "Absent",
+      "points": "Points",
+      "roster": "Student roster",
+      "refresh": "Refresh data",
+      "behaviorSaved": "Behavior saved and points refreshed.",
+      "submitConfirm": "Submit and finalize this attendance record?",
+      "selectFutureDue": "Choose a future due date and time",
+      "adminPortalTitle": "School administration workspace",
+      "adminPortalDescription": "Review school notification delivery in the communication log. Attendance, behavior recording, and homework assignment are currently available through the teacher portal.",
+      "openSession": "Open attendance session",
+      "sessionOpened": "Attendance session opened for this lesson."
     }
   },
   "parentHome": {
