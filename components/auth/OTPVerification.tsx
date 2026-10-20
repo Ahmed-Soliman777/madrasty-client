@@ -5,7 +5,6 @@ import React, { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5000';
 
 const OTPVerification = ({
     nationalId,
@@ -29,7 +28,7 @@ const OTPVerification = ({
         setLoading(true);
         setError('');
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/guardian/verify-otp`, {
+            const res = await fetch("/api/auth/guardian/verify-otp", {
                 method: "POST",
                 body: JSON.stringify({
                     phone,
@@ -47,11 +46,10 @@ const OTPVerification = ({
                 return
             }
 
-            if (!data.accessToken) {
+            if (!data.authenticated) {
                 setError(t('verifyOtpError'))
                 return
             }
-            localStorage.setItem('accessToken', data.accessToken)
             router.replace('/home')
         } catch {
             setError(t('networkError'))
@@ -105,7 +103,7 @@ const OTPVerification = ({
         setResending(true);
         setError('');
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/guardian/request-otp`, {
+            const res = await fetch("/api/auth/guardian/request-otp", {
                 method: 'POST',
                 body: JSON.stringify({ NationalId: nationalId }),
                 headers: { 'Content-Type': 'application/json' },
