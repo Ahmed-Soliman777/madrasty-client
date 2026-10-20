@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Backend integration
+
+The frontend uses same-origin Next.js route handlers for authentication and authenticated REST calls. Access tokens are stored in an HttpOnly cookie and are forwarded to the NestJS API as Bearer tokens by the server-side API route.
+
+Configure the backend URL in the frontend runtime environment:
+
+```env
+BACKEND_API_URL=http://localhost:5000
+JWT_EXPIRES_IN_SECONDS=3600
+```
+
+- `BACKEND_API_URL` should point to the NestJS server root URL, without an `/api` suffix.
+- `JWT_EXPIRES_IN_SECONDS` should match the backend `JWT_EXPIRES_IN_SECONDS` setting so the session cookie and JWT expire together.
+- For local development, run the NestJS server on port `5000` and the Next.js app on port `3000`.
+- Guardian sign-in requires the backend database and WhatsApp OTP delivery to be configured.
+- The guardian portal reads linked students, submitted attendance, behavior records, and class homework from the backend. Teacher attendance, behavior, homework, and communication-log actions persist through the existing REST endpoints.
