@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BookOpen, CheckCircle2, Clock3, GraduationCap, RefreshCw } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
@@ -87,10 +87,6 @@ export function TeacherQuickBoard() {
     void loadAssignments();
   }, [loadPortal, loadAssignments]);
 
-  const dateTime = useMemo(() => new Intl.DateTimeFormat(isArabic ? "ar-EG" : "en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }), [isArabic]);
 
   const studentName = (student: TeacherRosterStudent) =>
     isArabic ? student.fullName : student.fullNameEn;
