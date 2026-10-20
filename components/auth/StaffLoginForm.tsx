@@ -34,7 +34,7 @@ const StaffLoginForm = () => {
         return;
       }
 
-      if (data.staff.role !== "TEACHER") {
+      if (!["TEACHER", "SCHOOL_ADMIN"].includes(data.staff.role)) {
         await fetch("/api/auth/logout", { method: "POST" });
         setError(t("staffPortalUnavailable"));
         return;
