@@ -203,7 +203,9 @@
       "submitConfirm": "Submit and finalize this attendance record?",
       "selectFutureDue": "Choose a future due date and time",
       "adminPortalTitle": "School administration workspace",
-      "adminPortalDescription": "Review school notification delivery in the communication log. Attendance, behavior recording, and homework assignment are currently available through the teacher portal."
+      "adminPortalDescription": "Review school notification delivery in the communication log. Attendance, behavior recording, and homework assignment are currently available through the teacher portal.",
+      "openSession": "Open attendance session",
+      "sessionOpened": "Attendance session opened for this lesson."
     }
   },
   "parentHome": {
