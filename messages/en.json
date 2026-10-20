@@ -63,7 +63,8 @@
     "verifyOtpError": "That code is invalid or expired. Check it and try again.",
     "networkError": "Unable to reach the server. Check your connection and try again.",
     "logout": "Log out",
-    "staffLoginError": "Unable to sign in. Check your email and password, then try again."
+    "staffLoginError": "Unable to sign in. Check your email and password, then try again.",
+    "staffPortalUnavailable": "Signed in successfully, but the currently available dashboard is for teachers only."
   },
   "teacherQuick": {
     "nav": {
