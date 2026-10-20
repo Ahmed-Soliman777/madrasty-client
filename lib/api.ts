@@ -129,103 +129,67 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export async function fetchStudents(): Promise<ParentStudentData[]> {
-  try {
-    const result = await apiRequest<{ students: ParentStudentData[] }>("auth/guardian/portal");
-    return result.students;
-  } catch (error) {
-    throw error;
-  }
+  const result = await apiRequest<{ students: ParentStudentData[] }>("auth/guardian/portal");
+  return result.students;
 }
 
 export async function fetchTeacherPortal(timetableEntryId?: string): Promise<TeacherQuickPortal> {
-  try {
-    const query = timetableEntryId ? `?timetableEntryId=${encodeURIComponent(timetableEntryId)}` : "";
-    return await apiRequest<TeacherQuickPortal>(`staff/me/quick-portal${query}`);
-  } catch (error) {
-    throw error;
-  }
+  const query = timetableEntryId ? `?timetableEntryId=${encodeURIComponent(timetableEntryId)}` : "";
+  return apiRequest<TeacherQuickPortal>(`staff/me/quick-portal${query}`);
 }
 
 export async function openAttendanceSession(timetableEntryId: string) {
-  try {
-    return await apiRequest<{ id: string; status: "OPEN" | "SUBMITTED"; date: string }>(
-      "attendance-sessions",
-      { method: "POST", body: JSON.stringify({ timetableEntryId }) },
-    );
-  } catch (error) {
-    throw error;
-  }
+  return apiRequest<{ id: string; status: "OPEN" | "SUBMITTED"; date: string }>(
+    "attendance-sessions",
+    { method: "POST", body: JSON.stringify({ timetableEntryId }) },
+  );
 }
 
 export async function saveAttendanceRecords(
   sessionId: string,
   records: { studentId: string; status: ApiAttendanceStatus; arrivedAt?: string }[],
 ) {
-  try {
-    return await apiRequest<{ records: { studentId: string; status: ApiAttendanceStatus; arrivedAt: string | null; isExcused: boolean; markedAt: string }[] }>(
-      `attendance-sessions/${encodeURIComponent(sessionId)}/records`,
-      { method: "PUT", body: JSON.stringify({ records }) },
-    );
-  } catch (error) {
-    throw error;
-  }
+  return apiRequest<{ records: { studentId: string; status: ApiAttendanceStatus; arrivedAt: string | null; isExcused: boolean; markedAt: string }[] }>(
+    `attendance-sessions/${encodeURIComponent(sessionId)}/records`,
+    { method: "PUT", body: JSON.stringify({ records }) },
+  );
 }
 
 export async function submitAttendanceSession(sessionId: string) {
-  try {
-    return await apiRequest<{
-      session: { id: string; status: "OPEN" | "SUBMITTED"; date: string; submittedAt: string | null };
-      summary: { total: number; present: number; late: number; absent: number };
-      queuedNotifications: number;
-    }>(`attendance-sessions/${encodeURIComponent(sessionId)}/submit`, { method: "POST" });
-  } catch (error) {
-    throw error;
-  }
+  return apiRequest<{
+    session: { id: string; status: "OPEN" | "SUBMITTED"; date: string; submittedAt: string | null };
+    summary: { total: number; present: number; late: number; absent: number };
+    queuedNotifications: number;
+  }>(`attendance-sessions/${encodeURIComponent(sessionId)}/submit`, { method: "POST" });
 }
 
 export async function createBehaviorRecord(input: { studentId: string; categoryId: string; sessionId?: string }) {
-  try {
-    return await apiRequest<{ record: { id: string; studentId: string; categoryId: string; points: number; createdAt: string }; studentPoints: number }>(
-      "behavior-records",
-      { method: "POST", body: JSON.stringify(input) },
-    );
-  } catch (error) {
-    throw error;
-  }
+  return apiRequest<{ record: { id: string; studentId: string; categoryId: string; points: number; createdAt: string }; studentPoints: number }>(
+    "behavior-records",
+    { method: "POST", body: JSON.stringify(input) },
+  );
 }
 
 export async function fetchTeacherAssignments(): Promise<TeacherAssignment[]> {
-  try {
-    const result = await apiRequest<{ assignments: TeacherAssignment[] }>("homework/assignments");
-    return result.assignments;
-  } catch (error) {
-    throw error;
-  }
+  const result = await apiRequest<{ assignments: TeacherAssignment[] }>("homework/assignments");
+  return result.assignments;
 }
 
 export async function createHomework(input: HomeworkCreateInput) {
-  try {
-    return await apiRequest<{
-      homework: { id: string; assignmentId: string; title: string; dueAt: string; createdAt: string };
-      created: boolean;
-      queuedNotifications: number;
-    }>("homework", { method: "POST", body: JSON.stringify(input) });
-  } catch (error) {
-    throw error;
-  }
+  return apiRequest<{
+    homework: { id: string; assignmentId: string; title: string; dueAt: string; createdAt: string };
+    created: boolean;
+    queuedNotifications: number;
+  }>("homework", { method: "POST", body: JSON.stringify(input) });
 }
 
 export async function fetchComms(filters: CommunicationLogFilters = {}): Promise<CommunicationLogResponse> {
-  try {
-    const params = new URLSearchParams();
-    params.set("page", String(filters.page ?? 1));
-    params.set("limit", String(filters.limit ?? 10));
-    if (filters.status) params.set("status", filters.status);
-    if (filters.type) params.set("type", filters.type);
-    return await apiRequest<CommunicationLogResponse>(`notifications/communication-log?${params.toString()}`);
-  } catch (error) {
-    throw error;
-  }
+  const params = new URLSearchParams();
+  params.set("page", String(filters.page ?? 1));
+  params.set("limit", String(filters.limit ?? 10));
+  if (filters.status) params.set("status", filters.status);
+  if (filters.type) params.set("type", filters.type);
+  return apiRequest<CommunicationLogResponse>(`notifications/communication-log?${params.toString()}`);
 }
 
 export async function logout(): Promise<void> {
