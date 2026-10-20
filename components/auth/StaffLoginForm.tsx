@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
 const inputClass =
   "h-12 w-full rounded-lg border border-line bg-bg pe-11 ps-4 text-sm text-ink transition-colors placeholder:text-mute focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20";
 
@@ -23,19 +22,23 @@ const StaffLoginForm = () => {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/staff/login`, {
+      const response = await fetch("/api/auth/staff/login", {
         method: "POST",
         body: JSON.stringify({ email: staffEmail, password: staffPassword }),
         headers: { "Content-Type": "application/json" },
       });
-      const data = (await response.json()) as { accessToken?: string };
+      const data = (await response.json()) as { authenticated?: boolean; staff?: { role: string } };
 
-      if (!response.ok || !data.accessToken) {
+      if (!response.ok || !data.authenticated || !data.staff) {
         setError(t("staffLoginError"));
         return;
       }
 
-      window.localStorage.setItem("accessToken", data.accessToken);
+      if (data.staff.role !== "TEACHER") {
+        await fetch("/api/auth/logout", { method: "POST" });
+        setError(t("staffPortalUnavailable"));
+        return;
+      }
       router.replace("/staff");
     } catch {
       setError(t("networkError"));
