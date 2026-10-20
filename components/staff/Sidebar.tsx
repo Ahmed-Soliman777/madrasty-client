@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 
 const NAV: StaffNavItem[] = [{ id: "quickPortal", href: "/staff" }];
 
-export function Sidebar() {
+export function Sidebar({ role = "teacher" }: { role?: "teacher" | "admin" }) {
   const t = useTranslations("teacherQuick.nav");
 
   return (
@@ -15,7 +15,7 @@ export function Sidebar() {
         </div>
         <div className="min-w-0">
           <p className="text-sm font-bold text-navy">{t("brand")}</p>
-          <p className="mt-0.5 text-xs text-mute">{t("quickPortal")}</p>
+          <p className="mt-0.5 text-xs text-mute">{role === "admin" ? t("adminPortal") : t("quickPortal")}</p>
         </div>
       </div>
 
@@ -28,7 +28,7 @@ export function Sidebar() {
             className="flex min-h-11 items-center gap-3 rounded-lg bg-navy px-3 py-2.5 text-sm font-semibold text-white"
           >
             <LayoutDashboard size={18} aria-hidden="true" />
-            {t(item.id)}
+            {role === "admin" ? t("adminPortal") : t(item.id)}
           </Link>
         ))}
       </nav>
