@@ -35,6 +35,7 @@ export function TeacherQuickBoard() {
   const [busyStudentId, setBusyStudentId] = useState<string | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
   const [submitBusy, setSubmitBusy] = useState(false);
+  const [sessionBusy, setSessionBusy] = useState(false);
   const [homeworkBusy, setHomeworkBusy] = useState(false);
   const [error, setError] = useState("");
   const [assignmentError, setAssignmentError] = useState(false);
@@ -51,11 +52,7 @@ export function TeacherQuickBoard() {
     setLoading(true);
     setError("");
     try {
-      let result = await fetchTeacherPortal(requestedLessonId);
-      if (result.focusLessonId && !result.session) {
-        await openAttendanceSession(result.focusLessonId);
-        result = await fetchTeacherPortal(result.focusLessonId);
-      }
+      const result = await fetchTeacherPortal(requestedLessonId);
       setPortal(result);
       setSelectedLessonId(result.focusLessonId ?? "");
     } catch {
@@ -90,6 +87,22 @@ export function TeacherQuickBoard() {
 
   const studentName = (student: TeacherRosterStudent) =>
     isArabic ? student.fullName : student.fullNameEn;
+
+  const startSession = async () => {
+    if (!portal?.focusLessonId) return;
+    setSessionBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await openAttendanceSession(portal.focusLessonId);
+      await loadPortal(portal.focusLessonId);
+      setNotice("sessionOpened");
+    } catch {
+      setError("action");
+    } finally {
+      setSessionBusy(false);
+    }
+  };
 
   const changeStatus = async (studentId: string, status: AttendanceStatus) => {
     if (!portal?.session || portal.session.status !== "OPEN") return;
@@ -330,21 +343,31 @@ export function TeacherQuickBoard() {
             )}
 
             <div className="mt-4 flex flex-col gap-2 border-t border-line pt-4 sm:flex-row sm:justify-between">
-              <Button variant="ghost" onClick={() => void markAllPresent()} disabled={!sessionOpen || bulkBusy || submitBusy || portal.roster.length === 0}>
-                <CheckCircle2 size={16} aria-hidden="true" />
-                <span className="ms-2">{bulkBusy ? t("integration.loading") : t("integration.markAllPresent")}</span>
-              </Button>
-              <Button onClick={() => void submitAttendance()} disabled={!sessionOpen || submitBusy || portal.summary.unmarked > 0}>
-                <CheckCircle2 size={16} aria-hidden="true" />
-                <span className="ms-2">{submitBusy ? t("integration.loading") : t("integration.submitAttendance")}</span>
-              </Button>
+              {!portal.session ? (
+                <Button onClick={() => void startSession()} disabled={sessionBusy || !portal.focusLessonId}>
+                  <CheckCircle2 size={16} aria-hidden="true" />
+                  <span className="ms-2">{sessionBusy ? t("integration.loading") : t("integration.openSession")}</span>
+                </Button>
+              ) : sessionOpen ? (
+                <>
+                  <Button variant="ghost" onClick={() => void markAllPresent()} disabled={bulkBusy || submitBusy || portal.roster.length === 0}>
+                    <CheckCircle2 size={16} aria-hidden="true" />
+                    <span className="ms-2">{bulkBusy ? t("integration.loading") : t("integration.markAllPresent")}</span>
+                  </Button>
+                  <Button onClick={() => void submitAttendance()} disabled={submitBusy || portal.summary.unmarked > 0}>
+                    <CheckCircle2 size={16} aria-hidden="true" />
+                    <span className="ms-2">{submitBusy ? t("integration.loading") : t("integration.submitAttendance")}</span>
+                  </Button>
+                </>
+              ) : null}
             </div>
           </section>
         )}
 
         {notice && (
           <p role="status" className="rounded-lg border border-ok/20 bg-ok-bg px-3 py-2 text-sm text-ok">
-            {notice === "attendanceSaved" ? t("integration.attendanceSaved")
+            {notice === "sessionOpened" ? t("integration.sessionOpened")
+              : notice === "attendanceSaved" ? t("integration.attendanceSaved")
               : notice === "attendanceSubmitted" ? t("integration.attendanceSubmitted")
               : notice === "behaviorSaved" ? t("integration.behaviorSaved")
               : notice.startsWith("homework:") ? t("integration.homeworkCreated", { count: Number(notice.split(":")[1]) })
