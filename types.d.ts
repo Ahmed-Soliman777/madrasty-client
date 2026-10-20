@@ -48,7 +48,7 @@ declare global {
 
   interface VerifyOtpResponse {
     message: string;
-    accessToken: string;
+    authenticated: boolean;
     guardian: Record<string, unknown>;
   }
 
