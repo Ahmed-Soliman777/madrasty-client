@@ -72,11 +72,14 @@
       "brand": "NEIS · School System",
       "quickPortal": "Teacher Quick Portal",
       "support": "Technical & Academic Support",
-      "version": "Version v3.1"
+      "version": "Version v3.1",
+      "adminPortal": "Administration portal"
     },
     "header": {
       "teacherName": "Teacher portal",
-      "subtitle": "Attendance, behavior, homework and communication log"
+      "subtitle": "Attendance, behavior, homework and communication log",
+      "adminName": "School administration",
+      "adminSubtitle": "Review school communication and notification delivery"
     },
     "status": {
       "all": "All",
@@ -198,7 +201,9 @@
       "refresh": "Refresh data",
       "behaviorSaved": "Behavior saved and points refreshed.",
       "submitConfirm": "Submit and finalize this attendance record?",
-      "selectFutureDue": "Choose a future due date and time"
+      "selectFutureDue": "Choose a future due date and time",
+      "adminPortalTitle": "School administration workspace",
+      "adminPortalDescription": "Review school notification delivery in the communication log. Attendance, behavior recording, and homework assignment are currently available through the teacher portal."
     }
   },
   "parentHome": {
