@@ -1,12 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BookOpen, CheckCircle2, CircleAlert, Clock3, GraduationCap, RefreshCw } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock3, GraduationCap, RefreshCw } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { CommsLog } from "@/features/comms/CommsLog";
 import {
-  ApiError,
   createBehaviorRecord,
   createHomework,
   fetchTeacherAssignments,
@@ -92,10 +91,6 @@ export function TeacherQuickBoard() {
     dateStyle: "medium",
     timeStyle: "short",
   }), [isArabic]);
-  const time = useMemo(() => new Intl.DateTimeFormat(isArabic ? "ar-EG" : "en-GB", {
-    hour: "numeric",
-    minute: "2-digit",
-  }), [isArabic]);
 
   const studentName = (student: TeacherRosterStudent) =>
     isArabic ? student.fullName : student.fullNameEn;
@@ -106,7 +101,12 @@ export function TeacherQuickBoard() {
     setError("");
     setNotice("");
     try {
-      await saveAttendanceRecords(portal.session.id, [{ studentId, status }]);
+      const student = portal.roster.find((item) => item.studentId === studentId);
+      await saveAttendanceRecords(portal.session.id, [{
+        studentId,
+        status,
+        ...(status !== "ABSENT" ? { arrivedAt: student?.attendance?.arrivedAt ?? new Date().toISOString() } : {}),
+      }]);
       setNotice("attendanceSaved");
       await loadPortal(portal.focusLessonId ?? undefined);
     } catch {
@@ -125,6 +125,7 @@ export function TeacherQuickBoard() {
       await saveAttendanceRecords(portal.session.id, portal.roster.map((student) => ({
         studentId: student.studentId,
         status: "PRESENT" as ApiAttendanceStatus,
+        arrivedAt: student.attendance?.arrivedAt ?? new Date().toISOString(),
       })));
       setNotice("attendanceSaved");
       await loadPortal(portal.focusLessonId ?? undefined);
@@ -292,7 +293,7 @@ export function TeacherQuickBoard() {
                         <p className="mt-1 flex items-center gap-1.5 text-xs text-mute">
                           <Clock3 size={13} aria-hidden="true" />
                           {student.attendance?.arrivedAt
-                            ? dateTime.format(new Date(student.attendance.arrivedAt))
+                            ? new Intl.DateTimeFormat(isArabic ? "ar-EG" : "en-GB", { hour: "numeric", minute: "2-digit" }).format(new Date(student.attendance.arrivedAt))
                             : student.attendance?.status === "ABSENT" ? t("integration.absent") : t("integration.points") + ": " + student.points}
                         </p>
                       </div>
