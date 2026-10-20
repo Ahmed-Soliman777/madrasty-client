@@ -2,7 +2,6 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 const BACKEND_URL = (process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000").replace(/\/$/, "");
-const ALLOWED_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 
 type RouteContext = { params: Promise<{ path: string[] }> };
 
@@ -31,13 +30,17 @@ async function forward(request: Request, context: RouteContext) {
 
     const upstream = await fetch(`${BACKEND_URL}/api/${suffix}${incomingUrl.search}`, init);
     const payload = await upstream.text();
-    return new Response(payload, {
+    const response = new Response(payload, {
       status: upstream.status,
       headers: {
         "Content-Type": upstream.headers.get("Content-Type") ?? "application/json",
         "Cache-Control": "no-store",
       },
     });
+    if (upstream.status === 401) {
+      response.headers.append("Set-Cookie", "accessToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
+    }
+    return response;
   } catch {
     return NextResponse.json({ code: "BACKEND_UNAVAILABLE", message: "The service is temporarily unavailable" }, { status: 502 });
   }
