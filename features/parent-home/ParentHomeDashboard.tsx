@@ -72,6 +72,13 @@ export function ParentHomeDashboard() {
       }),
     [isArabic],
   );
+  const timeFormatter = useMemo(
+    () => new Intl.DateTimeFormat(isArabic ? "ar-EG" : "en-GB", {
+      hour: "numeric",
+      minute: "2-digit",
+    }),
+    [isArabic],
+  );
   const dateTimeFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(isArabic ? "ar-EG" : "en-GB", {
@@ -273,7 +280,7 @@ export function ParentHomeDashboard() {
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-semibold">{dateFormatter.format(new Date(record.date))}</p>
-                            <p className="mt-0.5 text-xs text-mute">{record.arrivedAt ? t("arrivalTime", { time: record.arrivedAt }) : t("noArrivalTime")}</p>
+                            <p className="mt-0.5 text-xs text-mute">{record.arrivedAt ? t("arrivalTime", { time: timeFormatter.format(new Date(record.arrivedAt)) }) : t("noArrivalTime")}</p>
                           </div>
                         </div>
                         <span className={`shrink-0 rounded-md px-2.5 py-1 text-xs font-semibold ${record.status === "PRESENT" ? "bg-ok-bg text-ok" : record.status === "LATE" ? "bg-warn-bg text-warn" : "bg-bad-bg text-bad"}`}>
