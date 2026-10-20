@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { fetchStudents } from "@/lib/api";
+import { fetchStudents, logout as clearSession } from "@/lib/api";
 import type { ParentStudentData } from "@/types";
 
 export function ParentHomeDashboard() {
@@ -87,10 +87,12 @@ export function ParentHomeDashboard() {
     router.replace(pathname, { locale: isArabic ? "en" : "ar" });
   };
 
-  const logout = () => {
-    window.localStorage.removeItem("accessToken");
-    window.localStorage.removeItem("refreshToken");
-    router.replace("/");
+  const logout = async () => {
+    try {
+      await clearSession();
+    } finally {
+      router.replace("/");
+    }
   };
 
   const studentName = (item: ParentStudentData) =>
@@ -121,7 +123,7 @@ export function ParentHomeDashboard() {
             </button>
             <button
               type="button"
-              onClick={logout}
+              onClick={() => void logout()}
               aria-label={t("logout")}
               className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-line px-3 text-sm font-semibold text-mute transition-colors hover:border-bad hover:bg-bad-bg hover:text-bad"
             >
