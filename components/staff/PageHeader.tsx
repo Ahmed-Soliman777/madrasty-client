@@ -3,6 +3,7 @@
 import { Globe2, LogOut } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { logout as clearSession } from "@/lib/api";
 
 export function PageHeader() {
   const t = useTranslations("teacherQuick.header");
@@ -15,10 +16,12 @@ export function PageHeader() {
     router.replace(pathname, { locale: locale === "ar" ? "en" : "ar" });
   };
 
-  const logout = () => {
-    window.localStorage.removeItem("accessToken");
-    window.localStorage.removeItem("refreshToken");
-    router.replace("/");
+  const logout = async () => {
+    try {
+      await clearSession();
+    } finally {
+      router.replace("/");
+    }
   };
 
   return (
@@ -39,7 +42,7 @@ export function PageHeader() {
         </button>
         <button
           type="button"
-          onClick={logout}
+          onClick={() => void logout()}
           className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm font-semibold text-mute transition-colors hover:border-bad hover:bg-bad-bg hover:text-bad"
         >
           <LogOut size={17} aria-hidden="true" />
