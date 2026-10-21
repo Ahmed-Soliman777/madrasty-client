@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  ApiError,
   fetchComms,
   type CommunicationLogItem,
   type NotificationStatus,
@@ -39,7 +40,7 @@ export function CommsLog() {
       setTotalPages(result.pagination.totalPages);
     } catch (cause) {
       setError(
-        cause instanceof Error && cause.message === "AUTH_REQUIRED"
+        cause instanceof ApiError && (cause.status === 401 || cause.status === 403 || cause.code === "AUTH_TOKEN_MISSING")
           ? "auth"
           : "load",
       );

@@ -1,15 +1,23 @@
 import type { ParentStudentData } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
-
-export type NotificationStatus =
-  | "PENDING"
-  | "SENDING"
-  | "SENT"
-  | "FAILED"
-  | "CANCELLED";
-
+export type NotificationStatus = "PENDING" | "SENDING" | "SENT" | "FAILED" | "CANCELLED";
 export type NotificationType = "HOMEWORK_ASSIGNED" | "STUDENT_ABSENT";
+export type ApiAttendanceStatus = "PRESENT" | "LATE" | "ABSENT";
+export type ApiBehaviorKind = "POSITIVE" | "NEGATIVE";
+
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000").replace(/\/$/, "");
+
+export class ApiError extends Error {
+  status: number;
+  code?: string;
+
+  constructor(message: string, status: number, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
 
 export interface CommunicationLogItem {
   id: string;
@@ -32,107 +40,195 @@ export interface CommunicationLogItem {
 
 export interface CommunicationLogResponse {
   items: CommunicationLogItem[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination: { page: number; limit: number; total: number; totalPages: number };
 }
 
 export interface CommunicationLogFilters {
   page?: number;
+  limit?: number;
   status?: NotificationStatus | "";
+  type?: NotificationType;
 }
 
-const students: ParentStudentData[] = [
-  {
-    id: "student-001",
-    fullName: "أحمد سليمان",
-    fullNameEn: "Ahmed Soliman",
-    grade: "الصف الرابع الابتدائي",
-    gradeEn: "Grade 4 Primary",
-    className: "4 / أ",
-    classNameEn: "4 / A",
-    attendanceRecords: [
-      { id: "attendance-001", date: "2026-10-19", status: "PRESENT", arrivedAt: "07:42" },
-      { id: "attendance-002", date: "2026-10-18", status: "LATE", arrivedAt: "08:11" },
-      { id: "attendance-003", date: "2026-10-15", status: "PRESENT", arrivedAt: "07:48" },
-      { id: "attendance-004", date: "2026-10-14", status: "ABSENT", arrivedAt: null },
-    ],
-    behaviorRecords: [
-      { id: "behavior-001", categoryName: "مشاركة متميزة", categoryNameEn: "Great participation", kind: "POSITIVE", points: 5, createdAt: "2026-10-19T09:30:00.000Z" },
-      { id: "behavior-002", categoryName: "إنجاز الواجب", categoryNameEn: "Homework completed", kind: "POSITIVE", points: 5, createdAt: "2026-10-17T10:15:00.000Z" },
-      { id: "behavior-003", categoryName: "تشتت", categoryNameEn: "Distracted", kind: "NEGATIVE", points: -3, createdAt: "2026-10-16T08:45:00.000Z" },
-    ],
-    homework: [
-      { id: "homework-001", title: "تمارين صفحة 45 – الضرب في عدد من رقمين", dueAt: "2026-10-21T08:00:00.000Z", createdAt: "2026-10-19T10:00:00.000Z" },
-      { id: "homework-002", title: "حل الأسئلة من 1 إلى 10", dueAt: "2026-10-22T08:00:00.000Z", createdAt: "2026-10-18T09:00:00.000Z" },
-    ],
-  },
-  {
-    id: "student-002",
-    fullName: "عمر سليمان",
-    fullNameEn: "Omar Soliman",
-    grade: "الصف الثاني الابتدائي",
-    gradeEn: "Grade 2 Primary",
-    className: "2 / ب",
-    classNameEn: "2 / B",
-    attendanceRecords: [
-      { id: "attendance-005", date: "2026-10-19", status: "PRESENT", arrivedAt: "07:50" },
-      { id: "attendance-006", date: "2026-10-18", status: "PRESENT", arrivedAt: "07:46" },
-      { id: "attendance-007", date: "2026-10-15", status: "ABSENT", arrivedAt: null },
-    ],
-    behaviorRecords: [
-      { id: "behavior-004", categoryName: "مشاركة متميزة", categoryNameEn: "Great participation", kind: "POSITIVE", points: 5, createdAt: "2026-10-19T08:50:00.000Z" },
-      { id: "behavior-005", categoryName: "تشتت", categoryNameEn: "Distracted", kind: "NEGATIVE", points: -3, createdAt: "2026-10-17T08:20:00.000Z" },
-    ],
-    homework: [
-      { id: "homework-003", title: "مراجعة درس الجمع", dueAt: "2026-10-21T08:00:00.000Z", createdAt: "2026-10-19T09:15:00.000Z" },
-    ],
-  },
-];
+export interface TeacherLesson {
+  timetableEntryId: string;
+  assignmentId: string;
+  state: "PAST" | "CURRENT" | "UPCOMING";
+  period: { number: number; startTime: string; endTime: string };
+  class: { id: string; name: string; nameEn: string; grade: string; gradeEn: string };
+  subject: { id: string; name: string; nameEn: string };
+}
 
-const wait = (ms = 150) => new Promise((resolve) => setTimeout(resolve, ms));
+export interface TeacherBehaviorCategory {
+  id: string;
+  code: string;
+  kind: ApiBehaviorKind;
+  points: number;
+  name: string;
+  nameEn: string;
+}
+
+export interface TeacherRosterStudent {
+  studentId: string;
+  fullName: string;
+  fullNameEn: string;
+  attendance: { status: ApiAttendanceStatus; arrivedAt: string | null; isExcused: boolean } | null;
+  points: number;
+}
+
+export interface TeacherQuickPortal {
+  teacher: { id: string; fullName: string; fullNameEn: string | null };
+  now: { date: string; weekday: string; time: string; timezone: string };
+  lessons: TeacherLesson[];
+  behaviorCategories: TeacherBehaviorCategory[];
+  focusLessonId: string | null;
+  session: { id: string; status: "OPEN" | "SUBMITTED"; submittedAt: string | null } | null;
+  roster: TeacherRosterStudent[];
+  summary: { total: number; present: number; late: number; absent: number; unmarked: number };
+}
+
+export interface TeacherAssignment {
+  assignmentId: string;
+  class: { id: string; name: string; nameEn: string; grade: string; gradeEn: string };
+  subject: { id: string; name: string; nameEn: string };
+}
+
+export interface HomeworkCreateInput {
+  assignmentId: string;
+  title: string;
+  notes?: string;
+  dueAt: string;
+  notifyGuardians?: boolean;
+}
+
+async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUnauthorized = true): Promise<T> {
+  try {
+    const headers = new Headers(init.headers);
+    if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+    const response = await fetch(`${API_BASE_URL}/api/${path}`, {
+      ...init,
+      headers,
+      credentials: "include",
+      cache: "no-store",
+    });
+    const payload = await response.json().catch(() => null) as
+      | { message?: string | string[]; code?: string }
+      | T
+      | null;
+
+    if (!response.ok) {
+      if (response.status === 401 && redirectOnUnauthorized && typeof window !== "undefined") {
+        window.location.assign("/");
+      }
+      const body = payload as { message?: string | string[]; code?: string } | null;
+      const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
+      throw new ApiError(message ?? "Request failed", response.status, body?.code);
+    }
+    return payload as T;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError("BACKEND_UNAVAILABLE", 0, "BACKEND_UNAVAILABLE");
+  }
+}
+
+export async function requestGuardianOtp(NationalId: string): Promise<{ phone: string; maskedPhone: string }> {
+  return apiRequest("auth/guardian/request-otp", {
+    method: "POST",
+    body: JSON.stringify({ NationalId }),
+  }, false);
+}
+
+export async function verifyGuardianOtp(phone: string, LoginOTP: string): Promise<{ authenticated?: boolean }> {
+  return apiRequest("auth/guardian/verify-otp", {
+    method: "POST",
+    headers: { "X-Client-Type": "web" },
+    body: JSON.stringify({ phone, LoginOTP }),
+  }, false);
+}
+
+export async function staffLogin(email: string, password: string): Promise<{ authenticated?: boolean; staff?: { role: string } }> {
+  return apiRequest("auth/staff/login", {
+    method: "POST",
+    headers: { "X-Client-Type": "web" },
+    body: JSON.stringify({ email, password }),
+  }, false);
+}
 
 export async function fetchStudents(): Promise<ParentStudentData[]> {
-  await wait();
-  return students;
+  const result = await apiRequest<{ students: ParentStudentData[] }>("auth/guardian/portal");
+  return result.students;
 }
 
-export async function fetchComms(
-  filters: CommunicationLogFilters = {},
-): Promise<CommunicationLogResponse> {
+export async function fetchTeacherPortal(timetableEntryId?: string): Promise<TeacherQuickPortal> {
+  const query = timetableEntryId ? `?timetableEntryId=${encodeURIComponent(timetableEntryId)}` : "";
+  return apiRequest<TeacherQuickPortal>(`staff/me/quick-portal${query}`);
+}
+
+export async function openAttendanceSession(timetableEntryId: string) {
+  return apiRequest<{ id: string; status: "OPEN" | "SUBMITTED"; date: string }>(
+    "attendance-sessions",
+    { method: "POST", body: JSON.stringify({ timetableEntryId }) },
+  );
+}
+
+export async function saveAttendanceRecords(
+  sessionId: string,
+  records: { studentId: string; status: ApiAttendanceStatus; arrivedAt?: string }[],
+) {
+  return apiRequest<{ records: { studentId: string; status: ApiAttendanceStatus; arrivedAt: string | null; isExcused: boolean; markedAt: string }[] }>(
+    `attendance-sessions/${encodeURIComponent(sessionId)}/records`,
+    { method: "PUT", body: JSON.stringify({ records }) },
+  );
+}
+
+export async function submitAttendanceSession(sessionId: string) {
+  return apiRequest<{
+    session: { id: string; status: "OPEN" | "SUBMITTED"; date: string; submittedAt: string | null };
+    summary: { total: number; present: number; late: number; absent: number };
+    queuedNotifications: number;
+  }>(`attendance-sessions/${encodeURIComponent(sessionId)}/submit`, { method: "POST" });
+}
+
+export async function createBehaviorRecord(input: { studentId: string; categoryId: string; sessionId?: string }) {
+  return apiRequest<{ record: { id: string; studentId: string; categoryId: string; points: number; createdAt: string }; studentPoints: number }>(
+    "behavior-records",
+    { method: "POST", body: JSON.stringify(input) },
+  );
+}
+
+export async function fetchTeacherAssignments(): Promise<TeacherAssignment[]> {
+  const result = await apiRequest<{ assignments: TeacherAssignment[] }>("homework/assignments");
+  return result.assignments;
+}
+
+export async function createHomework(input: HomeworkCreateInput) {
+  return apiRequest<{
+    homework: { id: string; assignmentId: string; title: string; dueAt: string; createdAt: string };
+    created: boolean;
+    queuedNotifications: number;
+  }>("homework", { method: "POST", body: JSON.stringify(input) });
+}
+
+export async function fetchComms(filters: CommunicationLogFilters = {}): Promise<CommunicationLogResponse> {
   const params = new URLSearchParams();
   params.set("page", String(filters.page ?? 1));
-  params.set("limit", "10");
+  params.set("limit", String(filters.limit ?? 10));
   if (filters.status) params.set("status", filters.status);
-
-  const token =
-    typeof window === "undefined" ? null : window.localStorage.getItem("accessToken");
-  if (!token) throw new Error("AUTH_REQUIRED");
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/notifications/communication-log?${params.toString()}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    },
-  );
-
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
-      throw new Error("AUTH_REQUIRED");
-    }
-    throw new Error("COMMUNICATION_LOG_UNAVAILABLE");
-  }
-
-  return (await response.json()) as CommunicationLogResponse;
+  if (filters.type) params.set("type", filters.type);
+  return apiRequest<CommunicationLogResponse>(`notifications/communication-log?${params.toString()}`);
 }
 
-export const saveStatus = async (_id: string, _s: StaffAttendanceStatus) => {
-  await wait();
-};
-export const sendHomework = async (_d: unknown) => {
-  await wait(300);
-};
+export async function logout(): Promise<void> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: "POST",
+      headers: { "X-Client-Type": "web" },
+      credentials: "include",
+      cache: "no-store",
+    });
+    if (!response.ok) throw new ApiError("Unable to clear session cookie", response.status);
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError("Unable to clear session cookie", 0, "LOGOUT_FAILED");
+  }
+}

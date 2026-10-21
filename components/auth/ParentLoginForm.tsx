@@ -3,8 +3,8 @@
 import { ArrowLeft, IdCard, Info } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { ApiError, requestGuardianOtp } from "@/lib/api";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000";
 const inputClass =
   "h-12 w-full rounded-lg border border-line bg-bg pe-11 ps-4 text-sm text-ink transition-colors placeholder:text-mute focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20";
 
@@ -20,21 +20,11 @@ const ParentLoginForm = ({ onLoginSuccess }: ParentLoginFormProps) => {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/guardian/request-otp`, {
-        method: "POST",
-        body: JSON.stringify({ NationalId: nationalId }),
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = (await response.json()) as RequestOtpResponse;
-
-      if (!response.ok) {
-        setError(t("requestOtpError"));
-        return;
-      }
+      const data = await requestGuardianOtp(nationalId);
 
       onLoginSuccess({ nationalId, phone: data.phone, maskedPhone: data.maskedPhone });
-    } catch {
-      setError(t("networkError"));
+    } catch (error) {
+      setError(error instanceof ApiError && error.status > 0 ? t("requestOtpError") : t("networkError"));
     } finally {
       setLoading(false);
     }

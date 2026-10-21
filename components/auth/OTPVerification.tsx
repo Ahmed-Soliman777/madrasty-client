@@ -4,8 +4,8 @@ import { Check, LockOpen, MessageSquareCheck, RotateCcw, Timer } from 'lucide-re
 import React, { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
+import { ApiError, requestGuardianOtp, verifyGuardianOtp } from '@/lib/api'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5000';
 
 const OTPVerification = ({
     nationalId,
@@ -29,32 +29,15 @@ const OTPVerification = ({
         setLoading(true);
         setError('');
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/guardian/verify-otp`, {
-                method: "POST",
-                body: JSON.stringify({
-                    phone,
-                    LoginOTP: code,
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
+            const data = await verifyGuardianOtp(phone, code);
 
-            const data = await res.json() as VerifyOtpResponse;
-
-            if (!res.ok) {
+            if (!data.authenticated) {
                 setError(t('verifyOtpError'))
                 return
             }
-
-            if (!data.accessToken) {
-                setError(t('verifyOtpError'))
-                return
-            }
-            localStorage.setItem('accessToken', data.accessToken)
             router.replace('/home')
-        } catch {
-            setError(t('networkError'))
+        } catch (error) {
+            setError(error instanceof ApiError && error.status > 0 ? t('verifyOtpError') : t('networkError'))
         } finally {
             setLoading(false)
         }
@@ -105,13 +88,8 @@ const OTPVerification = ({
         setResending(true);
         setError('');
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/guardian/request-otp`, {
-                method: 'POST',
-                body: JSON.stringify({ NationalId: nationalId }),
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await res.json() as RequestOtpResponse;
-            if (!res.ok) {
+            const data = await requestGuardianOtp(nationalId);
+            if (!data.phone) {
                 setError(t('requestOtpError'));
                 return;
             }
