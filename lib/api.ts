@@ -101,7 +101,7 @@ export interface HomeworkCreateInput {
   notifyGuardians?: boolean;
 }
 
-async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUnauthorized = true): Promise<T> {
   try {
     const headers = new Headers(init.headers);
     if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
@@ -117,7 +117,7 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
       | null;
 
     if (!response.ok) {
-      if (response.status === 401 && typeof window !== "undefined") {
+      if (response.status === 401 && redirectOnUnauthorized && typeof window !== "undefined") {
         window.location.assign("/");
       }
       const body = payload as { message?: string | string[]; code?: string } | null;
@@ -135,7 +135,7 @@ export async function requestGuardianOtp(NationalId: string): Promise<{ phone: s
   return apiRequest("auth/guardian/request-otp", {
     method: "POST",
     body: JSON.stringify({ NationalId }),
-  });
+  }, false);
 }
 
 export async function verifyGuardianOtp(phone: string, LoginOTP: string): Promise<{ authenticated?: boolean }> {
@@ -143,7 +143,7 @@ export async function verifyGuardianOtp(phone: string, LoginOTP: string): Promis
     method: "POST",
     headers: { "X-Client-Type": "web" },
     body: JSON.stringify({ phone, LoginOTP }),
-  });
+  }, false);
 }
 
 export async function staffLogin(email: string, password: string): Promise<{ authenticated?: boolean; staff?: { role: string } }> {
@@ -151,7 +151,7 @@ export async function staffLogin(email: string, password: string): Promise<{ aut
     method: "POST",
     headers: { "X-Client-Type": "web" },
     body: JSON.stringify({ email, password }),
-  });
+  }, false);
 }
 
 export async function fetchStudents(): Promise<ParentStudentData[]> {
