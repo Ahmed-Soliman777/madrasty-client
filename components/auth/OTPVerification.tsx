@@ -4,7 +4,7 @@ import { Check, LockOpen, MessageSquareCheck, RotateCcw, Timer } from 'lucide-re
 import React, { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
-import { requestGuardianOtp, verifyGuardianOtp } from '@/lib/api'
+import { ApiError, requestGuardianOtp, verifyGuardianOtp } from '@/lib/api'
 
 
 const OTPVerification = ({
@@ -36,8 +36,8 @@ const OTPVerification = ({
                 return
             }
             router.replace('/home')
-        } catch {
-            setError(t('networkError'))
+        } catch (error) {
+            setError(error instanceof ApiError && error.status > 0 ? t('verifyOtpError') : t('networkError'))
         } finally {
             setLoading(false)
         }
