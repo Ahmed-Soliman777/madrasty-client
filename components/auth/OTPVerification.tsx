@@ -35,11 +35,6 @@ const OTPVerification = ({
                 setError(t('verifyOtpError'))
                 return
             }
-
-            if (!data.authenticated) {
-                setError(t('verifyOtpError'))
-                return
-            }
             router.replace('/home')
         } catch {
             setError(t('networkError'))
