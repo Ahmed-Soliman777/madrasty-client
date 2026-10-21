@@ -4,7 +4,7 @@ import { ArrowLeft, Lock, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { logout, staffLogin } from "@/lib/api";
+import { ApiError, logout, staffLogin } from "@/lib/api";
 
 const inputClass =
   "h-12 w-full rounded-lg border border-line bg-bg pe-11 ps-4 text-sm text-ink transition-colors placeholder:text-mute focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20";
@@ -36,8 +36,8 @@ const StaffLoginForm = () => {
         return;
       }
       router.replace("/staff");
-    } catch {
-      setError(t("networkError"));
+    } catch (error) {
+      setError(error instanceof ApiError && error.status > 0 ? t("staffLoginError") : t("networkError"));
     } finally {
       setLoading(false);
     }
