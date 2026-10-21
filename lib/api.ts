@@ -5,6 +5,8 @@ export type NotificationType = "HOMEWORK_ASSIGNED" | "STUDENT_ABSENT";
 export type ApiAttendanceStatus = "PRESENT" | "LATE" | "ABSENT";
 export type ApiBehaviorKind = "POSITIVE" | "NEGATIVE";
 
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000").replace(/\/$/, "");
+
 export class ApiError extends Error {
   status: number;
   code?: string;
@@ -103,9 +105,10 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   try {
     const headers = new Headers(init.headers);
     if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
-    const response = await fetch(`/api/backend/${path}`, {
+    const response = await fetch(`${API_BASE_URL}/api/${path}`, {
       ...init,
       headers,
+      credentials: "include",
       cache: "no-store",
     });
     const payload = await response.json().catch(() => null) as
@@ -126,6 +129,29 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
     if (error instanceof ApiError) throw error;
     throw new ApiError("BACKEND_UNAVAILABLE", 0, "BACKEND_UNAVAILABLE");
   }
+}
+
+export async function requestGuardianOtp(NationalId: string): Promise<{ phone: string; maskedPhone: string }> {
+  return apiRequest("auth/guardian/request-otp", {
+    method: "POST",
+    body: JSON.stringify({ NationalId }),
+  });
+}
+
+export async function verifyGuardianOtp(phone: string, LoginOTP: string): Promise<{ authenticated?: boolean }> {
+  return apiRequest("auth/guardian/verify-otp", {
+    method: "POST",
+    headers: { "X-Client-Type": "web" },
+    body: JSON.stringify({ phone, LoginOTP }),
+  });
+}
+
+export async function staffLogin(email: string, password: string): Promise<{ authenticated?: boolean; staff?: { role: string } }> {
+  return apiRequest("auth/staff/login", {
+    method: "POST",
+    headers: { "X-Client-Type": "web" },
+    body: JSON.stringify({ email, password }),
+  });
 }
 
 export async function fetchStudents(): Promise<ParentStudentData[]> {
@@ -194,7 +220,12 @@ export async function fetchComms(filters: CommunicationLogFilters = {}): Promise
 
 export async function logout(): Promise<void> {
   try {
-    const response = await fetch("/api/auth/logout", { method: "POST", cache: "no-store" });
+    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: "POST",
+      headers: { "X-Client-Type": "web" },
+      credentials: "include",
+      cache: "no-store",
+    });
     if (!response.ok) throw new ApiError("Unable to clear session cookie", response.status);
   } catch (error) {
     if (error instanceof ApiError) throw error;
