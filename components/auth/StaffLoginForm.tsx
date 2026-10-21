@@ -4,6 +4,7 @@ import { ArrowLeft, Lock, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
+import { logout, staffLogin } from "@/lib/api";
 
 const inputClass =
   "h-12 w-full rounded-lg border border-line bg-bg pe-11 ps-4 text-sm text-ink transition-colors placeholder:text-mute focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20";
@@ -22,20 +23,15 @@ const StaffLoginForm = () => {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/staff/login", {
-        method: "POST",
-        body: JSON.stringify({ email: staffEmail, password: staffPassword }),
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = (await response.json()) as { authenticated?: boolean; staff?: { role: string } };
+      const data = await staffLogin(staffEmail, staffPassword);
 
-      if (!response.ok || !data.authenticated || !data.staff) {
+      if (!data.authenticated || !data.staff) {
         setError(t("staffLoginError"));
         return;
       }
 
       if (!["TEACHER", "SCHOOL_ADMIN"].includes(data.staff.role)) {
-        await fetch("/api/auth/logout", { method: "POST" });
+        await logout();
         setError(t("staffPortalUnavailable"));
         return;
       }
