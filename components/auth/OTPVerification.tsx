@@ -4,6 +4,7 @@ import { Check, LockOpen, MessageSquareCheck, RotateCcw, Timer } from 'lucide-re
 import React, { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
+import { requestGuardianOtp, verifyGuardianOtp } from '@/lib/api'
 
 
 const OTPVerification = ({
@@ -28,20 +29,9 @@ const OTPVerification = ({
         setLoading(true);
         setError('');
         try {
-            const res = await fetch("/api/auth/guardian/verify-otp", {
-                method: "POST",
-                body: JSON.stringify({
-                    phone,
-                    LoginOTP: code,
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
+            const data = await verifyGuardianOtp(phone, code);
 
-            const data = await res.json() as VerifyOtpResponse;
-
-            if (!res.ok) {
+            if (!data.authenticated) {
                 setError(t('verifyOtpError'))
                 return
             }
@@ -103,13 +93,8 @@ const OTPVerification = ({
         setResending(true);
         setError('');
         try {
-            const res = await fetch("/api/auth/guardian/request-otp", {
-                method: 'POST',
-                body: JSON.stringify({ NationalId: nationalId }),
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await res.json() as RequestOtpResponse;
-            if (!res.ok) {
+            const data = await requestGuardianOtp(nationalId);
+            if (!data.phone) {
                 setError(t('requestOtpError'));
                 return;
             }
