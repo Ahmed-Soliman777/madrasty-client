@@ -38,17 +38,26 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Backend integration
 
-The frontend uses same-origin Next.js route handlers for authentication and authenticated REST calls. Access tokens are stored in an HttpOnly cookie and are forwarded to the NestJS API as Bearer tokens by the server-side API route.
+The frontend calls the NestJS REST API directly; authentication and session handling live in the backend. Web sign-in uses an HttpOnly cookie, while mobile clients can use the access token returned by the same login endpoints. No Next.js API route handlers are required for authentication or API forwarding.
 
-Configure the backend URL in the frontend runtime environment:
+Configure the frontend environment:
 
 ```env
-BACKEND_API_URL=http://localhost:5000
-JWT_EXPIRES_IN_SECONDS=3600
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 ```
 
-- `BACKEND_API_URL` should point to the NestJS server root URL, without an `/api` suffix.
-- `JWT_EXPIRES_IN_SECONDS` should match the backend `JWT_EXPIRES_IN_SECONDS` setting so the session cookie and JWT expire together.
+Configure the backend environment:
+
+```env
+FRONTEND_ORIGINS=http://localhost:3000
+JWT_EXPIRES_IN_SECONDS=3600
+AUTH_COOKIE_DOMAIN=
+```
+
+- `NEXT_PUBLIC_API_BASE_URL` should point to the NestJS server root URL, without an `/api` suffix.
+- `FRONTEND_ORIGINS` is a comma-separated allowlist of frontend origins permitted to make credentialed browser requests.
+- `AUTH_COOKIE_DOMAIN` is optional. Set it to a shared parent domain (for example, `.example.com`) when the frontend and API are on separate subdomains. Leave it unset for localhost development.
+- `JWT_EXPIRES_IN_SECONDS` controls the JWT and web session-cookie lifetime.
 - For local development, run the NestJS server on port `5000` and the Next.js app on port `3000`.
 - Guardian sign-in requires the backend database and WhatsApp OTP delivery to be configured.
 - The guardian portal reads linked students, submitted attendance, behavior records, and class homework from the backend. Teacher attendance, behavior, homework, and communication-log actions persist through the existing REST endpoints.
