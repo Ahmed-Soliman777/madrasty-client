@@ -24,7 +24,7 @@ export function ParentHomeDashboard() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const isArabic = locale === "ar";
+  const isArabic = locale === "ar";\n  const selectedStudentStorageKey = "madrasty:selectedStudentId";
   const [students, setStudents] = useState<ParentStudentData[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -36,9 +36,13 @@ export function ParentHomeDashboard() {
     try {
       const result = await fetchStudents();
       setStudents(result);
-      setSelectedId((current) =>
-        result.some((student) => student.id === current) ? current : result[0]?.id ?? "",
-      );
+      const storedId = window.sessionStorage.getItem(selectedStudentStorageKey) ?? "";
+      setSelectedId((current) => {
+        const preferredId = current || storedId;
+        return result.some((student) => student.id === preferredId)
+          ? preferredId
+          : result[0]?.id ?? "";
+      });
     } catch {
       setLoadError(true);
     } finally {
@@ -49,6 +53,12 @@ export function ParentHomeDashboard() {
   useEffect(() => {
     void loadStudents();
   }, [loadStudents]);
+
+  useEffect(() => {
+    if (selectedId) {
+      window.sessionStorage.setItem(selectedStudentStorageKey, selectedId);
+    }
+  }, [selectedId]);
 
   const student = students.find((item) => item.id === selectedId) ?? students[0];
   const attendanceSummary = useMemo(() => {
