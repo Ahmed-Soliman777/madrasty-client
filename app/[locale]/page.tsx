@@ -21,7 +21,8 @@ export default async function Home({
 }) {
   const { locale } = await params;
   const t = await getTranslations("landing");
-  const currentLocale = locale === "ar" ? "ar" : "en";\n  const isArabic = currentLocale === "ar";
+  const currentLocale = locale === "ar" ? "ar" : "en";
+  const isArabic = currentLocale === "ar";
   const Arrow = isArabic ? ArrowLeft : ArrowRight;
 
   return (
@@ -50,7 +51,7 @@ export default async function Home({
             </Link>
             <Link
               href="/auth"
-              locale={locale}
+              locale={currentLocale}
               className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-navy px-4 text-sm font-bold text-white transition-transform hover:-translate-y-0.5 hover:bg-brand focus-visible:outline-offset-4 sm:px-5"
             >
               <span>{t("signIn")}</span>
@@ -78,7 +79,7 @@ export default async function Home({
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/auth"
-                locale={locale}
+                locale={currentLocale}
                 className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-brand px-6 text-base font-bold text-white shadow-lg shadow-brand/15 transition-all hover:-translate-y-0.5 hover:bg-navy focus-visible:outline-offset-4"
               >
                 {t("getStarted")}
@@ -219,7 +220,7 @@ export default async function Home({
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-200">{t("multiStudentDescription")}</p>
               </div>
             </div>
-            <Link href="/auth" locale={locale} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-navy transition-colors hover:bg-sky-100">
+            <Link href="/auth" locale={currentLocale} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-navy transition-colors hover:bg-sky-100">
               {t("signIn")}
               <Arrow size={16} aria-hidden="true" />
             </Link>
