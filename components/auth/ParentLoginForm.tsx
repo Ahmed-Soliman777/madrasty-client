@@ -22,14 +22,13 @@ const ParentLoginForm = ({ onLoginSuccess }: ParentLoginFormProps) => {
     try {
       const data = await requestGuardianOtp(nationalId);
       if (!data.nationalId) {
-        throw new ApiError("Selected student was not returned by the server", 502, "MISSING_STUDENT_ID");
+        throw new ApiError("Selected student was not returned by the server", 502, "MISSING_STUDENT_NATIONAL_ID");
       }
 
       onLoginSuccess({
-        nationalId,
+        nationalId: data.nationalId,
         phone: data.phone,
         maskedPhone: data.maskedPhone,
-        nationalId: data.nationalId,
       });
     } catch (error) {
       setError(error instanceof ApiError && error.status > 0 ? t("requestOtpError") : t("networkError"));
