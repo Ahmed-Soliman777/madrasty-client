@@ -7,6 +7,8 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import OTPVerification from "./OTPVerification";
 import LoginPortal from "./LoginPortal";
 
+const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
+
 const AuthenticationComponent = () => {
   const locale = useLocale();
   const t = useTranslations("auth");
@@ -25,6 +27,7 @@ const AuthenticationComponent = () => {
   }, [currentStep]);
 
   const handleLoginSuccess = (nextChallenge: GuardianChallenge) => {
+    window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, nextChallenge.studentId);
     setChallenge(nextChallenge);
     setTimerSeconds(45);
     setCurrentStep(2);
@@ -34,7 +37,6 @@ const AuthenticationComponent = () => {
     router.replace(pathname, { locale: locale === "ar" ? "en" : "ar" });
   };
 
-  console.log(currentStep)
   return (
     <section className="flex min-h-screen w-full flex-col bg-surface px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
       <header className="flex items-center justify-between gap-3">
@@ -47,7 +49,7 @@ const AuthenticationComponent = () => {
               <span className="text-lg font-bold tracking-tight text-navy">{t("brandName")}</span>
               <span className="rounded border border-line bg-soft px-1.5 py-0.5 text-[10px] font-bold text-brand">NEIS</span>
             </div>
-            <p className="mt-0.5 text-xs text-mute hidden lg:block">{t("schoolName")}</p>
+            <p className="mt-0.5 hidden text-xs text-mute lg:block">{t("schoolName")}</p>
           </div>
         </div>
         <button
@@ -62,7 +64,6 @@ const AuthenticationComponent = () => {
       </header>
 
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center py-10">
-
         <h1 className="mb-7 text-2xl font-bold tracking-tight text-navy sm:text-3xl">{t("loginTitle")}</h1>
 
         {currentStep === 1 && <LoginPortal onLoginSuccess={handleLoginSuccess} />}
