@@ -21,14 +21,14 @@ export default async function Home({
 }) {
   const { locale } = await params;
   const t = await getTranslations("landing");
-  const isArabic = locale === "ar";
+  const currentLocale = locale === "ar" ? "ar" : "en";\n  const isArabic = currentLocale === "ar";
   const Arrow = isArabic ? ArrowLeft : ArrowRight;
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-ink">
       <header className="relative z-10 border-b border-line/80 bg-surface/90 backdrop-blur">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8" aria-label={t("navigationLabel")}>
-          <Link href="/" locale={locale} className="flex min-w-0 items-center gap-3 rounded-lg focus-visible:outline-offset-4">
+          <Link href="/" locale={currentLocale} className="flex min-w-0 items-center gap-3 rounded-lg focus-visible:outline-offset-4">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-navy text-white shadow-sm">
               <GraduationCap size={25} aria-hidden="true" />
             </span>
