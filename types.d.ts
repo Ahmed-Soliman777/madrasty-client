@@ -56,12 +56,14 @@ declare global {
     message: string;
     phone: string;
     maskedPhone: string;
+    studentId: string;
   }
 
   interface GuardianChallenge {
     nationalId: string;
     phone: string;
     maskedPhone: string;
+    studentId: string;
   }
 
   interface LoginPortalProps {
