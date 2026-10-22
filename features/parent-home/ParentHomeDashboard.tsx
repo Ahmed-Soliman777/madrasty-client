@@ -25,7 +25,7 @@ export function ParentHomeDashboard() {
   const router = useRouter();
   const pathname = usePathname();
   const isArabic = locale === "ar";
-  const selectedStudentStorageKey = "madrasty:selectedStudentId";
+  const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
   const [students, setStudents] = useState<ParentStudentData[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ export function ParentHomeDashboard() {
     try {
       const result = await fetchStudents();
       setStudents(result);
-      const storedId = window.sessionStorage.getItem(selectedStudentStorageKey) ?? "";
+      const storedId = window.sessionStorage.getItem(SELECTED_STUDENT_STORAGE_KEY) ?? "";
       setSelectedId((current) => {
         const preferredId = current || storedId;
         return result.some((student) => student.id === preferredId)
@@ -57,7 +57,7 @@ export function ParentHomeDashboard() {
 
   useEffect(() => {
     if (selectedId) {
-      window.sessionStorage.setItem(selectedStudentStorageKey, selectedId);
+      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedId);
     }
   }, [selectedId]);
 
@@ -115,7 +115,7 @@ export function ParentHomeDashboard() {
 
   const handleStudentChange = (studentId: string) => {
     setSelectedId(studentId);
-    window.sessionStorage.setItem(selectedStudentStorageKey, studentId);
+    window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, studentId);
   };
 
   const studentName = (item: ParentStudentData) =>
