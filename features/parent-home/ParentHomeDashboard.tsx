@@ -19,13 +19,14 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { fetchStudents, logout as clearSession } from "@/lib/api";
 import type { ParentStudentData } from "@/types";
 
+const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
+
 export function ParentHomeDashboard() {
   const t = useTranslations("parentHome");
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const isArabic = locale === "ar";
-  const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
   const [students, setStudents] = useState<ParentStudentData[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
