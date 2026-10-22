@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import OTPVerification from "./OTPVerification";
 import LoginPortal from "./LoginPortal";
+import Link from "next/link";
 
 const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentNationalId";
 
@@ -40,7 +41,7 @@ const AuthenticationComponent = () => {
   return (
     <section className="flex min-h-screen w-full flex-col bg-surface px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
       <header className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
+        <Link href={'/'} className="flex min-w-0 items-center gap-3">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-navy text-white">
             <GraduationCap size={21} aria-hidden="true" />
           </div>
@@ -51,7 +52,7 @@ const AuthenticationComponent = () => {
             </div>
             <p className="mt-0.5 hidden text-xs text-mute lg:block">{t("schoolName")}</p>
           </div>
-        </div>
+        </Link>
         <button
           type="button"
           onClick={switchLanguage}

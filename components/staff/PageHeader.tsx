@@ -20,7 +20,7 @@ export function PageHeader({ role = "teacher" }: { role?: "teacher" | "admin" })
     try {
       await clearSession();
     } finally {
-      router.replace("/");
+      router.replace(`/auth`);
     }
   };
 

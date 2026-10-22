@@ -111,7 +111,7 @@ export function ParentHomeDashboard() {
     try {
       await clearSession();
     } finally {
-      router.replace("/");
+      router.replace(`/auth`);
     }
   };
 
@@ -178,7 +178,7 @@ export function ParentHomeDashboard() {
                 {t("selectStudent")}
               </label>
               <div className="relative">
-                <UsersRound className="pointer-events-none absolute inset-y-0 start-3 my-auto text-slate-300" size={18} aria-hidden="true" />
+                <UsersRound className="pointer-events-none absolute inset-y-0 inset-s-3 my-auto text-slate-300" size={18} aria-hidden="true" />
                 <select
                   id="student-select"
                   value={student?.id ?? ""}
@@ -190,7 +190,7 @@ export function ParentHomeDashboard() {
                     <option key={item.id} value={item.id}>{studentName(item)}</option>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute inset-y-0 end-3 my-auto text-mute" size={17} aria-hidden="true" />
+                <ChevronDown className="pointer-events-none absolute inset-y-0 inset-e-3 my-auto text-mute" size={17} aria-hidden="true" />
               </div>
             </div>
           </div>
