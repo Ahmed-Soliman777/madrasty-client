@@ -22,7 +22,12 @@ const ParentLoginForm = ({ onLoginSuccess }: ParentLoginFormProps) => {
     try {
       const data = await requestGuardianOtp(nationalId);
 
-      onLoginSuccess({ nationalId, phone: data.phone, maskedPhone: data.maskedPhone });
+      onLoginSuccess({
+        nationalId,
+        phone: data.phone,
+        maskedPhone: data.maskedPhone,
+        studentId: data.studentId,
+      });
     } catch (error) {
       setError(error instanceof ApiError && error.status > 0 ? t("requestOtpError") : t("networkError"));
     } finally {
