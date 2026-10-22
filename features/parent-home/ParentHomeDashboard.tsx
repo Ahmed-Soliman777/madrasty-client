@@ -112,7 +112,7 @@ export function ParentHomeDashboard() {
     }
   };
 
-  const studentName = (item: ParentStudentData) =>
+  const handleStudentChange = (studentId: string) => {\n    setSelectedId(studentId);\n    window.sessionStorage.setItem(selectedStudentStorageKey, studentId);\n  };\n\n  const studentName = (item: ParentStudentData) =>
     isArabic ? item.fullName : item.fullNameEn;
 
   return (
@@ -171,7 +171,7 @@ export function ParentHomeDashboard() {
                 <select
                   id="student-select"
                   value={student?.id ?? ""}
-                  onChange={(event) => setSelectedId(event.target.value)}
+                  onChange={(event) => handleStudentChange(event.target.value)}
                   disabled={loading || students.length < 2}
                   className="min-h-12 w-full appearance-none rounded-lg border border-white/20 bg-white px-10 py-2 text-sm font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-75"
                 >
