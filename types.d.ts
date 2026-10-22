@@ -26,6 +26,7 @@ export interface ParentHomeworkItem {
 
 export interface ParentStudentData {
   id: string;
+  nationalId: string;
   fullName: string;
   fullNameEn: string;
   grade: string;
@@ -56,14 +57,14 @@ declare global {
     message: string;
     phone: string;
     maskedPhone: string;
-    studentId: string;
+    nationalId: string;
   }
 
   interface GuardianChallenge {
     nationalId: string;
     phone: string;
     maskedPhone: string;
-    studentId: string;
+    nationalId: string;
   }
 
   interface LoginPortalProps {
