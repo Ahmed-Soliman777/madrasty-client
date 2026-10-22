@@ -41,7 +41,7 @@ export async function proxy(request: NextRequest) {
   const locale = segments[0] && LOCALES.has(segments[0]) ? segments[0] : routing.defaultLocale;
   const routeSegments = segments[0] && LOCALES.has(segments[0]) ? segments.slice(1) : segments;
   const route = routeSegments.join("/");
-  const isLoginPage = route === "";
+  const isLoginPage = route === "auth";
   const isParentPage = route === "home" || route.startsWith("home/");
   const isStaffPage = route === "staff" || route.startsWith("staff/");
   const token = request.cookies.get("accessToken")?.value;
@@ -50,7 +50,7 @@ export async function proxy(request: NextRequest) {
     const user = await getSessionUser(token);
     if (!user) {
       if (isParentPage || isStaffPage) {
-        const response = NextResponse.redirect(new URL(`/${locale}`, request.url));
+        const response = NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
         clearSession(response);
         return response;
       }
@@ -69,16 +69,22 @@ export async function proxy(request: NextRequest) {
     }
 
     if (isParentPage && user.type !== "guardian") {
-      return NextResponse.redirect(new URL(`/${locale}/staff`, request.url));
+      if (user.type === "staff" && ["TEACHER", "SCHOOL_ADMIN"].includes(user.role)) {
+        return NextResponse.redirect(new URL(`/${locale}/staff`, request.url));
+      }
+      return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
     }
 
     if (isStaffPage && (user.type !== "staff" || !["TEACHER", "SCHOOL_ADMIN"].includes(user.role))) {
-      return NextResponse.redirect(new URL(`/${locale}`, request.url));
+      if (user.type === "guardian") {
+        return NextResponse.redirect(new URL(`/${locale}/home`, request.url));
+      }
+      return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
     }
   }
 
   if ((isParentPage || isStaffPage) && !token) {
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+    return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
   }
 
   return intlMiddleware(request);

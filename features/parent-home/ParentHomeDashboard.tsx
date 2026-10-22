@@ -19,6 +19,8 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { fetchStudents, logout as clearSession } from "@/lib/api";
 import type { ParentStudentData } from "@/types";
 
+const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentNationalId";
+
 export function ParentHomeDashboard() {
   const t = useTranslations("parentHome");
   const locale = useLocale();
@@ -36,8 +38,12 @@ export function ParentHomeDashboard() {
     try {
       const result = await fetchStudents();
       setStudents(result);
+      const storedNationalId = window.sessionStorage.getItem(SELECTED_STUDENT_STORAGE_KEY) ?? "";
+      const preferredStudent = result.find((student) => student.nationalId === storedNationalId);
       setSelectedId((current) =>
-        result.some((student) => student.id === current) ? current : result[0]?.id ?? "",
+        result.some((student) => student.id === current)
+          ? current
+          : preferredStudent?.id ?? result[0]?.id ?? "",
       );
     } catch {
       setLoadError(true);
@@ -49,6 +55,13 @@ export function ParentHomeDashboard() {
   useEffect(() => {
     void loadStudents();
   }, [loadStudents]);
+
+  useEffect(() => {
+    const selectedStudent = students.find((item) => item.id === selectedId);
+    if (selectedStudent?.nationalId) {
+      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedStudent.nationalId);
+    }
+  }, [selectedId, students]);
 
   const student = students.find((item) => item.id === selectedId) ?? students[0];
   const attendanceSummary = useMemo(() => {
@@ -98,7 +111,15 @@ export function ParentHomeDashboard() {
     try {
       await clearSession();
     } finally {
-      router.replace("/");
+      router.replace(`/auth`);
+    }
+  };
+
+  const handleStudentChange = (studentId: string) => {
+    setSelectedId(studentId);
+    const selectedStudent = students.find((item) => item.id === studentId);
+    if (selectedStudent?.nationalId) {
+      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedStudent.nationalId);
     }
   };
 
@@ -157,11 +178,11 @@ export function ParentHomeDashboard() {
                 {t("selectStudent")}
               </label>
               <div className="relative">
-                <UsersRound className="pointer-events-none absolute inset-y-0 start-3 my-auto text-slate-300" size={18} aria-hidden="true" />
+                <UsersRound className="pointer-events-none absolute inset-y-0 inset-s-3 my-auto text-slate-300" size={18} aria-hidden="true" />
                 <select
                   id="student-select"
                   value={student?.id ?? ""}
-                  onChange={(event) => setSelectedId(event.target.value)}
+                  onChange={(event) => handleStudentChange(event.target.value)}
                   disabled={loading || students.length < 2}
                   className="min-h-12 w-full appearance-none rounded-lg border border-white/20 bg-white px-10 py-2 text-sm font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-75"
                 >
@@ -169,7 +190,7 @@ export function ParentHomeDashboard() {
                     <option key={item.id} value={item.id}>{studentName(item)}</option>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute inset-y-0 end-3 my-auto text-mute" size={17} aria-hidden="true" />
+                <ChevronDown className="pointer-events-none absolute inset-y-0 inset-e-3 my-auto text-mute" size={17} aria-hidden="true" />
               </div>
             </div>
           </div>
