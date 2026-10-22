@@ -64,7 +64,6 @@ declare global {
     nationalId: string;
     phone: string;
     maskedPhone: string;
-    nationalId: string;
   }
 
   interface LoginPortalProps {
