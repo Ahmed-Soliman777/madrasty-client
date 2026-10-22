@@ -19,7 +19,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { fetchStudents, logout as clearSession } from "@/lib/api";
 import type { ParentStudentData } from "@/types";
 
-const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
+const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentNationalId";
 
 export function ParentHomeDashboard() {
   const t = useTranslations("parentHome");
@@ -38,13 +38,13 @@ export function ParentHomeDashboard() {
     try {
       const result = await fetchStudents();
       setStudents(result);
-      const storedId = window.sessionStorage.getItem(SELECTED_STUDENT_STORAGE_KEY) ?? "";
-      setSelectedId((current) => {
-        const preferredId = current || storedId;
-        return result.some((student) => student.id === preferredId)
-          ? preferredId
-          : result[0]?.id ?? "";
-      });
+      const storedNationalId = window.sessionStorage.getItem(SELECTED_STUDENT_STORAGE_KEY) ?? "";
+      const preferredStudent = result.find((student) => student.nationalId === storedNationalId);
+      setSelectedId((current) =>
+        result.some((student) => student.id === current)
+          ? current
+          : preferredStudent?.id ?? result[0]?.id ?? "",
+      );
     } catch {
       setLoadError(true);
     } finally {
@@ -57,10 +57,11 @@ export function ParentHomeDashboard() {
   }, [loadStudents]);
 
   useEffect(() => {
-    if (selectedId) {
-      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedId);
+    const selectedStudent = students.find((item) => item.id === selectedId);
+    if (selectedStudent?.nationalId) {
+      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedStudent.nationalId);
     }
-  }, [selectedId]);
+  }, [selectedId, students]);
 
   const student = students.find((item) => item.id === selectedId) ?? students[0];
   const attendanceSummary = useMemo(() => {
@@ -116,7 +117,10 @@ export function ParentHomeDashboard() {
 
   const handleStudentChange = (studentId: string) => {
     setSelectedId(studentId);
-    window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, studentId);
+    const selectedStudent = students.find((item) => item.id === studentId);
+    if (selectedStudent?.nationalId) {
+      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedStudent.nationalId);
+    }
   };
 
   const studentName = (item: ParentStudentData) =>
