@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import OTPVerification from "./OTPVerification";
 import LoginPortal from "./LoginPortal";
 
-const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
+const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentNationalId";
 
 const AuthenticationComponent = () => {
   const locale = useLocale();
@@ -27,7 +27,7 @@ const AuthenticationComponent = () => {
   }, [currentStep]);
 
   const handleLoginSuccess = (nextChallenge: GuardianChallenge) => {
-    window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, nextChallenge.studentId);
+    window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, nextChallenge.nationalId);
     setChallenge(nextChallenge);
     setTimerSeconds(45);
     setCurrentStep(2);
