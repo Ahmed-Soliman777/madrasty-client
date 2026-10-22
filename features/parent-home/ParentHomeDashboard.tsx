@@ -24,7 +24,8 @@ export function ParentHomeDashboard() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const isArabic = locale === "ar";\n  const selectedStudentStorageKey = "madrasty:selectedStudentId";
+  const isArabic = locale === "ar";
+  const selectedStudentStorageKey = "madrasty:selectedStudentId";
   const [students, setStudents] = useState<ParentStudentData[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -112,7 +113,12 @@ export function ParentHomeDashboard() {
     }
   };
 
-  const handleStudentChange = (studentId: string) => {\n    setSelectedId(studentId);\n    window.sessionStorage.setItem(selectedStudentStorageKey, studentId);\n  };\n\n  const studentName = (item: ParentStudentData) =>
+  const handleStudentChange = (studentId: string) => {
+    setSelectedId(studentId);
+    window.sessionStorage.setItem(selectedStudentStorageKey, studentId);
+  };
+
+  const studentName = (item: ParentStudentData) =>
     isArabic ? item.fullName : item.fullNameEn;
 
   return (
