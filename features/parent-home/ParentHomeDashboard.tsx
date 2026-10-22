@@ -25,6 +25,7 @@ export function ParentHomeDashboard() {
   const router = useRouter();
   const pathname = usePathname();
   const isArabic = locale === "ar";
+  const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentId";
   const [students, setStudents] = useState<ParentStudentData[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -36,9 +37,13 @@ export function ParentHomeDashboard() {
     try {
       const result = await fetchStudents();
       setStudents(result);
-      setSelectedId((current) =>
-        result.some((student) => student.id === current) ? current : result[0]?.id ?? "",
-      );
+      const storedId = window.sessionStorage.getItem(SELECTED_STUDENT_STORAGE_KEY) ?? "";
+      setSelectedId((current) => {
+        const preferredId = current || storedId;
+        return result.some((student) => student.id === preferredId)
+          ? preferredId
+          : result[0]?.id ?? "";
+      });
     } catch {
       setLoadError(true);
     } finally {
@@ -49,6 +54,12 @@ export function ParentHomeDashboard() {
   useEffect(() => {
     void loadStudents();
   }, [loadStudents]);
+
+  useEffect(() => {
+    if (selectedId) {
+      window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, selectedId);
+    }
+  }, [selectedId]);
 
   const student = students.find((item) => item.id === selectedId) ?? students[0];
   const attendanceSummary = useMemo(() => {
@@ -100,6 +111,11 @@ export function ParentHomeDashboard() {
     } finally {
       router.replace("/");
     }
+  };
+
+  const handleStudentChange = (studentId: string) => {
+    setSelectedId(studentId);
+    window.sessionStorage.setItem(SELECTED_STUDENT_STORAGE_KEY, studentId);
   };
 
   const studentName = (item: ParentStudentData) =>
@@ -161,7 +177,7 @@ export function ParentHomeDashboard() {
                 <select
                   id="student-select"
                   value={student?.id ?? ""}
-                  onChange={(event) => setSelectedId(event.target.value)}
+                  onChange={(event) => handleStudentChange(event.target.value)}
                   disabled={loading || students.length < 2}
                   className="min-h-12 w-full appearance-none rounded-lg border border-white/20 bg-white px-10 py-2 text-sm font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-75"
                 >
