@@ -69,16 +69,22 @@ export async function proxy(request: NextRequest) {
     }
 
     if (isParentPage && user.type !== "guardian") {
-      return NextResponse.redirect(new URL(`/${locale}/staff`, request.url));
+      if (user.type === "staff" && ["TEACHER", "SCHOOL_ADMIN"].includes(user.role)) {
+        return NextResponse.redirect(new URL(`/${locale}/staff`, request.url));
+      }
+      return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
     }
 
     if (isStaffPage && (user.type !== "staff" || !["TEACHER", "SCHOOL_ADMIN"].includes(user.role))) {
-      return NextResponse.redirect(new URL(`/${locale}`, request.url));
+      if (user.type === "guardian") {
+        return NextResponse.redirect(new URL(`/${locale}/home`, request.url));
+      }
+      return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
     }
   }
 
   if ((isParentPage || isStaffPage) && !token) {
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+    return NextResponse.redirect(new URL(`/${locale}/auth`, request.url));
   }
 
   return intlMiddleware(request);
