@@ -131,7 +131,7 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUna
   }
 }
 
-export async function requestGuardianOtp(NationalId: string): Promise<{ phone: string; maskedPhone: string }> {
+export async function requestGuardianOtp(NationalId: string): Promise<{ phone: string; maskedPhone: string; studentId: string }> {
   return apiRequest("auth/guardian/request-otp", {
     method: "POST",
     body: JSON.stringify({ NationalId }),
