@@ -256,6 +256,13 @@ export interface TimetableEntry {
   };
 }
 
+export interface SchoolPeriodOption {
+  id: string;
+  number: number;
+  startTime: string;
+  endTime: string;
+}
+
 export interface AcademicYearOption {
   id: string;
   name: string;
@@ -304,6 +311,10 @@ export async function fetchTeacherTimetable(academicYearId?: string): Promise<Ti
 
 export async function fetchGuardianTimetable(studentId: string): Promise<GuardianTimetableResponse> {
   return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
+}
+
+export async function fetchSchoolPeriods(): Promise<SchoolPeriodOption[]> {
+  return apiRequest<SchoolPeriodOption[]>("timetables/periods");
 }
 
 export async function fetchAcademicYears(): Promise<AcademicYearOption[]> {
