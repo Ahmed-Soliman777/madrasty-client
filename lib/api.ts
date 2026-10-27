@@ -256,6 +256,13 @@ export interface TimetableEntry {
   };
 }
 
+export interface AcademicYearOption {
+  id: string;
+  name: string;
+  nameEn: string;
+  isCurrent: boolean;
+}
+
 export interface TimetableSummary {
   id: string;
   schoolId: string;
@@ -288,6 +295,10 @@ export async function fetchTeacherTimetable(academicYearId?: string): Promise<Ti
 
 export async function fetchGuardianTimetable(studentId: string): Promise<GuardianTimetableResponse> {
   return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
+}
+
+export async function fetchAcademicYears(): Promise<AcademicYearOption[]> {
+  return apiRequest<AcademicYearOption[]>("timetables/academic-years");
 }
 
 export async function fetchSchoolTimetables(academicYearId?: string): Promise<TimetableSummary[]> {
