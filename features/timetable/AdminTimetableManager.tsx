@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertTriangle, CalendarDays, CheckCircle2, ChevronDown, CircleHelp, RefreshCw, WandSparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -8,12 +8,14 @@ import {
   deleteSchoolTimetable,
   deleteTimetableEntry,
   fetchAcademicYears,
+  fetchSchoolPeriods,
   fetchSchoolTimetable,
   fetchSchoolTimetables,
   generateSchoolTimetable,
   publishSchoolTimetable,
   updateTimetableEntry,
   type AcademicYearOption,
+  type SchoolPeriodOption,
   type TimetableEntry,
   type TimetableSummary,
   type TimetableWeekday,
@@ -28,6 +30,7 @@ export function AdminTimetableManager() {
   const isArabic = locale === "ar";
   const [versions, setVersions] = useState<TimetableSummary[]>([]);
   const [academicYears, setAcademicYears] = useState<AcademicYearOption[]>([]);
+  const [schoolPeriods, setSchoolPeriods] = useState<SchoolPeriodOption[]>([]);
   const [selectedAcademicYearId, setSelectedAcademicYearId] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selected, setSelected] = useState<TimetableSummary | null>(null);
@@ -40,22 +43,20 @@ export function AdminTimetableManager() {
   const [conflictDetails, setConflictDetails] = useState<string[]>([]);
   const selectedIdRef = useRef("");
 
-  const periods = useMemo(() => {
-    const map = new Map<string, TimetableEntry["period"]>();
-    for (const entry of selected?.entries ?? []) map.set(entry.period.id, entry.period);
-    return [...map.values()].sort((a, b) => a.number - b.number);
-  }, [selected]);
+  const periods = schoolPeriods;
 
   const loadVersions = useCallback(async (preferredId?: string) => {
     setLoading(true);
     setError("");
     try {
-      const [result, years] = await Promise.all([
+      const [result, years, availablePeriods] = await Promise.all([
         fetchSchoolTimetables(),
         fetchAcademicYears().catch(() => [] as AcademicYearOption[]),
+        fetchSchoolPeriods().catch(() => [] as SchoolPeriodOption[]),
       ]);
       setVersions(result);
       setAcademicYears(years);
+      setSchoolPeriods(availablePeriods);
       const currentId = selectedIdRef.current;
       const nextId = (preferredId && result.some((item) => item.id === preferredId) ? preferredId : undefined)
         ?? (currentId && result.some((item) => item.id === currentId) ? currentId : undefined)
