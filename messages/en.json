@@ -374,6 +374,10 @@
       "publishSuccess": "The timetable was approved and published. The previous published version has been archived.",
       "draftDeleted": "The proposed timetable was deleted."
     },
-    "missingAssignment": "{subject}: {requested} lessons required, but only {placed} were placed."
+    "missingAssignment": "{subject}: {requested} lessons required, but only {placed} were placed.",
+    "chooseAcademicYear": "Academic year",
+    "noAcademicYears": "No academic years available",
+    "noAcademicYearsDescription": "The server did not return any available academic years. Refresh or ask the system administrator to check the academic-year setup.",
+    "currentAcademicYear": "Current year"
   }
 }
