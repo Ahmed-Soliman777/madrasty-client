@@ -344,7 +344,7 @@ export async function deleteTimetableEntry(timetableId: string, entryId: string)
   entryId: string;
   assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean };
 }> {
-  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, { method: "DELETE" });
+  return apiRequest<{ deleted: boolean; entryId: string; assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean } }>(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, { method: "DELETE" });
 }
 
 export async function publishSchoolTimetable(timetableId: string): Promise<TimetableSummary> {
