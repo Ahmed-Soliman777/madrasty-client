@@ -374,6 +374,10 @@
       "publishSuccess": "تم اعتماد الجدول ونشره بنجاح. أصبحت النسخة المنشورة السابقة مؤرشفة.",
       "draftDeleted": "تم حذف النسخة المقترحة."
     },
-    "missingAssignment": "المادة {subject}: المطلوب {requested} حصة، والموزع {placed} فقط."
+    "missingAssignment": "المادة {subject}: المطلوب {requested} حصة، والموزع {placed} فقط.",
+    "chooseAcademicYear": "السنة الدراسية",
+    "noAcademicYears": "لا توجد سنوات دراسية",
+    "noAcademicYearsDescription": "تعذر العثور على سنة دراسية متاحة من الخادم. حدّث الصفحة أو اطلب من مسؤول النظام التحقق من إعدادات السنة الدراسية.",
+    "currentAcademicYear": "السنة الحالية"
   }
 }
