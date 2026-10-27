@@ -7,11 +7,13 @@ import {
   ApiError,
   deleteSchoolTimetable,
   deleteTimetableEntry,
+  fetchAcademicYears,
   fetchSchoolTimetable,
   fetchSchoolTimetables,
   generateSchoolTimetable,
   publishSchoolTimetable,
   updateTimetableEntry,
+  type AcademicYearOption,
   type TimetableEntry,
   type TimetableSummary,
   type TimetableWeekday,
@@ -25,6 +27,8 @@ export function AdminTimetableManager() {
   const locale = useLocale();
   const isArabic = locale === "ar";
   const [versions, setVersions] = useState<TimetableSummary[]>([]);
+  const [academicYears, setAcademicYears] = useState<AcademicYearOption[]>([]);
+  const [selectedAcademicYearId, setSelectedAcademicYearId] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selected, setSelected] = useState<TimetableSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,8 +50,12 @@ export function AdminTimetableManager() {
     setLoading(true);
     setError("");
     try {
-      const result = await fetchSchoolTimetables();
+      const [result, years] = await Promise.all([
+        fetchSchoolTimetables(),
+        fetchAcademicYears().catch(() => [] as AcademicYearOption[]),
+      ]);
       setVersions(result);
+      setAcademicYears(years);
       const currentId = selectedIdRef.current;
       const nextId = (preferredId && result.some((item) => item.id === preferredId) ? preferredId : undefined)
         ?? (currentId && result.some((item) => item.id === currentId) ? currentId : undefined)
@@ -55,6 +63,9 @@ export function AdminTimetableManager() {
         ?? "";
       setSelectedId(nextId);
       selectedIdRef.current = nextId;
+      const selectedVersion = result.find((item) => item.id === nextId);
+      const yearId = selectedVersion?.academicYearId ?? years.find((year) => year.isCurrent)?.id ?? years[0]?.id ?? "";
+      setSelectedAcademicYearId(yearId);
       if (nextId) {
         setDetailLoading(true);
         const detail = await fetchSchoolTimetable(nextId);
@@ -87,6 +98,7 @@ export function AdminTimetableManager() {
     try {
       const detail = await fetchSchoolTimetable(id);
       setSelected(detail);
+      setSelectedAcademicYearId(detail.academicYearId);
       setEditValues(Object.fromEntries((detail.entries ?? []).map((entry) => [entry.id, { weekday: entry.weekday, periodId: entry.periodId }])));
     } catch {
       setError("loadError");
@@ -96,7 +108,7 @@ export function AdminTimetableManager() {
   };
 
   const generate = async () => {
-    const academicYearId = selected?.academicYearId ?? versions.find((item) => item.id === selectedId)?.academicYearId;
+    const academicYearId = selectedAcademicYearId || selected?.academicYearId || versions.find((item) => item.id === selectedId)?.academicYearId;
     if (!academicYearId) {
       setError("noAcademicYear");
       return;
@@ -208,6 +220,16 @@ export function AdminTimetableManager() {
       <div className="rounded-xl border border-line bg-surface p-4 sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
           <label className="block min-w-0 flex-1 text-sm font-semibold">
+            {t("chooseAcademicYear")}
+            <span className="relative mt-1.5 block">
+              <select value={selectedAcademicYearId} onChange={(event) => setSelectedAcademicYearId(event.target.value)} disabled={loading || busy || academicYears.length === 0} className="min-h-11 w-full appearance-none rounded-lg border border-line bg-bg px-3 pe-9 text-sm font-normal focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
+                {academicYears.length === 0 && <option value="">{t("noAcademicYears")}</option>}
+                {academicYears.map((year) => <option key={year.id} value={year.id}>{isArabic ? year.name : year.nameEn || year.name}{year.isCurrent ? ` · ${t("currentAcademicYear")}` : ""}</option>)}
+              </select>
+              <ChevronDown size={16} className="pointer-events-none absolute end-3 top-3.5 text-mute" aria-hidden="true" />
+            </span>
+          </label>
+          <label className="block min-w-0 flex-1 text-sm font-semibold">
             {t("chooseVersion")}
             <span className="relative mt-1.5 block">
               <select value={selectedId} onChange={(event) => void loadSelected(event.target.value)} disabled={loading || versions.length === 0} className="min-h-11 w-full appearance-none rounded-lg border border-line bg-bg px-3 pe-9 text-sm font-normal focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
@@ -217,14 +239,14 @@ export function AdminTimetableManager() {
               <ChevronDown size={16} className="pointer-events-none absolute end-3 top-3.5 text-mute" aria-hidden="true" />
             </span>
           </label>
-          <button type="button" onClick={() => void generate()} disabled={busy || loading || versions.length === 0} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="button" onClick={() => void generate()} disabled={busy || loading || academicYears.length === 0 || !selectedAcademicYearId} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand px-4 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
             <WandSparkles size={16} aria-hidden="true" />{busy ? t("working") : t("generateDraft")}
           </button>
         </div>
         {versions.length === 0 && !loading && (
           <div className="mt-4 flex items-start gap-3 rounded-lg border border-dashed border-line bg-bg p-4 text-sm leading-6 text-mute">
             <CircleHelp size={19} className="mt-0.5 shrink-0" aria-hidden="true" />
-            <p>{t("noVersionsDescription")}</p>
+            <p>{academicYears.length === 0 ? t("noAcademicYearsDescription") : t("noVersionsDescription")}</p>
           </div>
         )}
       </div>
