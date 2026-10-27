@@ -232,3 +232,110 @@ export async function logout(): Promise<void> {
     throw new ApiError("Unable to clear session cookie", 0, "LOGOUT_FAILED");
   }
 }
+
+
+export type TimetableStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type TimetableWeekday = "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
+
+export interface TimetableEntry {
+  id: string;
+  timetableId: string;
+  assignmentId: string;
+  staffId?: string;
+  classId: string;
+  periodId: string;
+  weekday: TimetableWeekday;
+  isActive: boolean;
+  period: { id: string; number: number; startTime: string; endTime: string };
+  assignment: {
+    subject: { name: string; nameEn: string };
+    class: { id: string; name: string; nameEn: string; grade?: string; gradeEn?: string };
+    staff: { id: string; fullName: string; fullNameEn: string | null };
+  };
+}
+
+export interface TimetableSummary {
+  id: string;
+  schoolId: string;
+  academicYearId: string;
+  version: number;
+  status: TimetableStatus;
+  approvedAt?: string | null;
+  publishedAt?: string | null;
+  academicYear?: { id: string; name: string; nameEn: string; isCurrent?: boolean };
+  _count?: { entries: number };
+  entries?: TimetableEntry[];
+}
+
+export interface GuardianTimetableResponse {
+  student: {
+    id: string;
+    fullName: string;
+    fullNameEn: string;
+    class: { name: string; nameEn: string; academicYearId: string };
+  };
+  timetable: { id: string; version: number; status: "PUBLISHED"; entries: TimetableEntry[] } | null;
+}
+
+export async function fetchTeacherTimetable(academicYearId?: string): Promise<TimetableEntry[]> {
+  const params = new URLSearchParams();
+  if (academicYearId) params.set("academicYearId", academicYearId);
+  const suffix = params.size ? `?${params.toString()}` : "";
+  return apiRequest<TimetableEntry[]>(`timetables/teacher/me${suffix}`);
+}
+
+export async function fetchGuardianTimetable(studentId: string): Promise<GuardianTimetableResponse> {
+  return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
+}
+
+export async function fetchSchoolTimetables(academicYearId?: string): Promise<TimetableSummary[]> {
+  const params = new URLSearchParams();
+  if (academicYearId) params.set("academicYearId", academicYearId);
+  const suffix = params.size ? `?${params.toString()}` : "";
+  return apiRequest<TimetableSummary[]>(`timetables${suffix}`);
+}
+
+export async function fetchSchoolTimetable(timetableId: string): Promise<TimetableSummary> {
+  return apiRequest<TimetableSummary>(`timetables/${encodeURIComponent(timetableId)}`);
+}
+
+export async function generateSchoolTimetable(academicYearId: string): Promise<{
+  timetable: TimetableSummary;
+  requestedLessons: number;
+  placedLessons: number;
+  missing: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
+  publishable: boolean;
+  message: string;
+}> {
+  return apiRequest("timetables/generate", {
+    method: "POST",
+    body: JSON.stringify({ academicYearId }),
+  });
+}
+
+export async function updateTimetableEntry(
+  timetableId: string,
+  entryId: string,
+  input: { periodId: string; weekday: TimetableWeekday },
+): Promise<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteTimetableEntry(timetableId: string, entryId: string): Promise<{
+  deleted: boolean;
+  entryId: string;
+  assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean };
+}> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, { method: "DELETE" });
+}
+
+export async function publishSchoolTimetable(timetableId: string): Promise<TimetableSummary> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/publish`, { method: "POST" });
+}
+
+export async function deleteSchoolTimetable(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
+}
