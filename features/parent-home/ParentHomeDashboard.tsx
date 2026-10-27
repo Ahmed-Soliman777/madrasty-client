@@ -200,7 +200,7 @@ export function ParentHomeDashboard() {
         </section>
 
         <div role="tablist" aria-label={timetableT("guardianTabsLabel")} className="mt-5 flex gap-2 overflow-x-auto border-b border-line">
-          <button type="button" role="tab" aria-selected={activeTab === "overview"} onClick={() => setActiveTab("overview")} className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "overview" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}>{t("portalLabel")}</button>
+          <button type="button" role="tab" aria-selected={activeTab === "overview"} onClick={() => setActiveTab("overview")} className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "overview" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}>{t("overviewTab")}</button>
           <button type="button" role="tab" aria-selected={activeTab === "timetable"} onClick={() => setActiveTab("timetable")} className={`inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "timetable" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}><CalendarDays size={16} aria-hidden="true" />{timetableT("guardianTab")}</button>
         </div>
 
