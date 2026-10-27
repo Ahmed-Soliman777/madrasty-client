@@ -10,12 +10,14 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:
 export class ApiError extends Error {
   status: number;
   code?: string;
+  details?: Record<string, unknown>;
 
-  constructor(message: string, status: number, code?: string) {
+  constructor(message: string, status: number, code?: string, details?: Record<string, unknown>) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -112,7 +114,7 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUna
       cache: "no-store",
     });
     const payload = await response.json().catch(() => null) as
-      | { message?: string | string[]; code?: string }
+      | { message?: string | string[]; code?: string; [key: string]: unknown }
       | T
       | null;
 
@@ -120,9 +122,9 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUna
       if (response.status === 401 && redirectOnUnauthorized && typeof window !== "undefined") {
         window.location.assign("/");
       }
-      const body = payload as { message?: string | string[]; code?: string } | null;
+      const body = payload as { message?: string | string[]; code?: string; [key: string]: unknown } | null;
       const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
-      throw new ApiError(message ?? "Request failed", response.status, body?.code);
+      throw new ApiError(message ?? "Request failed", response.status, body?.code, body ?? undefined);
     }
     return payload as T;
   } catch (error) {
