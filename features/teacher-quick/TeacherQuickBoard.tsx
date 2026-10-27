@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { BookOpen, CheckCircle2, Clock3, GraduationCap, RefreshCw } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, Clock3, GraduationCap, RefreshCw } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { CommsLog } from "@/features/comms/CommsLog";
+import { TeacherTimetablePanel } from "@/features/timetable/TeacherTimetablePanel";
 import {
   createBehaviorRecord,
   createHomework,
@@ -25,6 +26,8 @@ const STATUS_OPTIONS: AttendanceStatus[] = ["PRESENT", "LATE", "ABSENT"];
 
 export function TeacherQuickBoard() {
   const t = useTranslations("teacherQuick");
+  const timetableT = useTranslations("timetable");
+  const [activeTab, setActiveTab] = useState<"portal" | "timetable">("portal");
   const locale = useLocale();
   const isArabic = locale === "ar";
   const [portal, setPortal] = useState<TeacherQuickPortal | null>(null);
@@ -217,6 +220,12 @@ export function TeacherQuickBoard() {
   const sessionOpen = portal?.session?.status === "OPEN";
 
   return (
+    <div className="space-y-5">
+      <div role="tablist" aria-label={timetableT("teacherTabsLabel")} className="flex gap-2 overflow-x-auto border-b border-line">
+        <button type="button" role="tab" aria-selected={activeTab === "portal"} onClick={() => setActiveTab("portal")} className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "portal" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}>{t("nav.quickPortal")}</button>
+        <button type="button" role="tab" aria-selected={activeTab === "timetable"} onClick={() => setActiveTab("timetable")} className={`inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "timetable" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}><CalendarDays size={16} aria-hidden="true" />{timetableT("teacherTab")}</button>
+      </div>
+      {activeTab === "timetable" ? <TeacherTimetablePanel /> : (
     <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
       <div className="min-w-0 space-y-5">
         <section className="rounded-xl border border-line bg-surface p-4 sm:p-5">
@@ -458,6 +467,8 @@ export function TeacherQuickBoard() {
         </section>
         <CommsLog />
       </aside>
+    </div>
+      )}
     </div>
   );
 }
