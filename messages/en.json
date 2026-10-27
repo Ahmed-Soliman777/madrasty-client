@@ -373,6 +373,7 @@
       "entryDeleted": "The lesson was removed from the proposed timetable.",
       "publishSuccess": "The timetable was approved and published. The previous published version has been archived.",
       "draftDeleted": "The proposed timetable was deleted."
-    }
+    },
+    "missingAssignment": "{subject}: {requested} lessons required, but only {placed} were placed."
   }
 }
