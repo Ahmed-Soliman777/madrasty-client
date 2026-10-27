@@ -279,7 +279,8 @@
     "noHomework": "No homework assignments are available.",
     "footer": "Nile Egyptian International Schools",
     "gradeLabel": "Grade",
-    "classLabel": "Class"
+    "classLabel": "Class",
+    "overviewTab": "Overview"
   },
   "timetable": {
     "teacherTabsLabel": "Teacher portal sections",
