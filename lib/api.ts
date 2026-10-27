@@ -276,6 +276,15 @@ export interface TimetableSummary {
   entries?: TimetableEntry[];
 }
 
+export interface GenerateTimetableResult {
+  timetable: TimetableSummary;
+  requestedLessons: number;
+  placedLessons: number;
+  missing: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
+  publishable: boolean;
+  message: string;
+}
+
 export interface GuardianTimetableResponse {
   student: {
     id: string;
@@ -312,15 +321,8 @@ export async function fetchSchoolTimetable(timetableId: string): Promise<Timetab
   return apiRequest<TimetableSummary>(`timetables/${encodeURIComponent(timetableId)}`);
 }
 
-export async function generateSchoolTimetable(academicYearId: string): Promise<{
-  timetable: TimetableSummary;
-  requestedLessons: number;
-  placedLessons: number;
-  missing: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
-  publishable: boolean;
-  message: string;
-}> {
-  return apiRequest("timetables/generate", {
+export async function generateSchoolTimetable(academicYearId: string): Promise<GenerateTimetableResult> {
+  return apiRequest<GenerateTimetableResult>("timetables/generate", {
     method: "POST",
     body: JSON.stringify({ academicYearId }),
   });
@@ -331,7 +333,7 @@ export async function updateTimetableEntry(
   entryId: string,
   input: { periodId: string; weekday: TimetableWeekday },
 ): Promise<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }> {
-  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, {
+  return apiRequest<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }>(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, {
     method: "PATCH",
     body: JSON.stringify(input),
   });
@@ -346,9 +348,9 @@ export async function deleteTimetableEntry(timetableId: string, entryId: string)
 }
 
 export async function publishSchoolTimetable(timetableId: string): Promise<TimetableSummary> {
-  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/publish`, { method: "POST" });
+  return apiRequest<TimetableSummary>(`timetables/${encodeURIComponent(timetableId)}/publish`, { method: "POST" });
 }
 
 export async function deleteSchoolTimetable(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
-  return apiRequest(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
+  return apiRequest<{ deleted: boolean; timetableId: string }>(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
 }
