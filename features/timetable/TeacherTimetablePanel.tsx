@@ -2,14 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { CalendarDays, RefreshCw } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { ApiError, fetchTeacherTimetable, type TimetableEntry } from "@/lib/api";
 import { TimetableTable } from "./TimetableTable";
 
 export function TeacherTimetablePanel() {
   const t = useTranslations("timetable");
-  const locale = useLocale();
-  const isArabic = locale === "ar";
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
