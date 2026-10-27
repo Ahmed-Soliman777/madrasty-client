@@ -279,7 +279,8 @@
     "noHomework": "لا توجد واجبات متاحة.",
     "footer": "مدارس النيل المصرية الدولية",
     "gradeLabel": "الصف",
-    "classLabel": "الفصل"
+    "classLabel": "الفصل",
+    "overviewTab": "نظرة عامة"
   },
   "timetable": {
     "teacherTabsLabel": "أقسام بوابة المعلم",
