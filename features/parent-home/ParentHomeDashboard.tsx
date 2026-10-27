@@ -17,14 +17,12 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { fetchStudents, logout as clearSession } from "@/lib/api";
-import { GuardianTimetablePanel } from "@/features/timetable/GuardianTimetablePanel";
 import type { ParentStudentData } from "@/types";
 
 const SELECTED_STUDENT_STORAGE_KEY = "madrasty:selectedStudentNationalId";
 
 export function ParentHomeDashboard() {
   const t = useTranslations("parentHome");
-  const timetableT = useTranslations("timetable");
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -33,7 +31,6 @@ export function ParentHomeDashboard() {
   const [selectedId, setSelectedId] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview" | "timetable">("overview");
 
   const loadStudents = useCallback(async () => {
     setLoading(true);
@@ -199,11 +196,6 @@ export function ParentHomeDashboard() {
           </div>
         </section>
 
-        <div role="tablist" aria-label={timetableT("guardianTabsLabel")} className="mt-5 flex gap-2 overflow-x-auto border-b border-line">
-          <button type="button" role="tab" aria-selected={activeTab === "overview"} onClick={() => setActiveTab("overview")} className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "overview" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}>{t("portalLabel")}</button>
-          <button type="button" role="tab" aria-selected={activeTab === "timetable"} onClick={() => setActiveTab("timetable")} className={`inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold transition ${activeTab === "timetable" ? "border-brand text-brand" : "border-transparent text-mute hover:text-ink"}`}><CalendarDays size={16} aria-hidden="true" />{timetableT("guardianTab")}</button>
-        </div>
-
         {loading ? (
           <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label={t("loading")} aria-busy="true">
             {[0, 1, 2].map((item) => (
@@ -222,8 +214,6 @@ export function ParentHomeDashboard() {
               {t("retry")}
             </button>
           </section>
-        ) : activeTab === "timetable" ? (
-          <GuardianTimetablePanel studentId={student.id} />
         ) : (
           <>
             <section className="mt-5 flex flex-col gap-3 rounded-xl border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
