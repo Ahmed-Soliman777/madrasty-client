@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, CalendarDays, CheckCircle2, ChevronDown, CircleHelp, RefreshCw, WandSparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -13,7 +13,6 @@ import {
   publishSchoolTimetable,
   updateTimetableEntry,
   type TimetableEntry,
-  type TimetableStatus,
   type TimetableSummary,
   type TimetableWeekday,
 } from "@/lib/api";
@@ -34,6 +33,8 @@ export function AdminTimetableManager() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [editValues, setEditValues] = useState<Record<string, { weekday: TimetableWeekday; periodId: string }>>({});
+  const [conflictDetails, setConflictDetails] = useState<string[]>([]);
+  const selectedIdRef = useRef("");
 
   const periods = useMemo(() => {
     const map = new Map<string, TimetableEntry["period"]>();
@@ -47,11 +48,13 @@ export function AdminTimetableManager() {
     try {
       const result = await fetchSchoolTimetables();
       setVersions(result);
+      const currentId = selectedIdRef.current;
       const nextId = (preferredId && result.some((item) => item.id === preferredId) ? preferredId : undefined)
-        ?? (selectedId && result.some((item) => item.id === selectedId) ? selectedId : undefined)
+        ?? (currentId && result.some((item) => item.id === currentId) ? currentId : undefined)
         ?? result[0]?.id
         ?? "";
       setSelectedId(nextId);
+      selectedIdRef.current = nextId;
       if (nextId) {
         setDetailLoading(true);
         const detail = await fetchSchoolTimetable(nextId);
@@ -66,13 +69,15 @@ export function AdminTimetableManager() {
       setLoading(false);
       setDetailLoading(false);
     }
-  }, [selectedId]);
+  }, []);
 
   useEffect(() => { void loadVersions(); }, [loadVersions]);
 
   const loadSelected = async (id: string) => {
     setSelectedId(id);
+    selectedIdRef.current = id;
     setError("");
+    setConflictDetails([]);
     setNotice("");
     if (!id) {
       setSelected(null);
@@ -99,13 +104,18 @@ export function AdminTimetableManager() {
     setBusy(true);
     setError("");
     setNotice("");
+    setConflictDetails([]);
     try {
       const result = await generateSchoolTimetable(academicYearId);
       await loadVersions(result.timetable.id);
       setNotice(result.publishable ? "generatedSuccess" : "generatedPartial");
-      if (!result.publishable) setError("missingLessons");
+      if (!result.publishable) {
+        setError("missingLessons");
+        setConflictDetails(result.missing.map((item) => t("missingAssignment", { subject: item.subject, requested: item.requested, placed: item.placed })));
+      }
     } catch (caught) {
       setError(caught instanceof ApiError ? errorKey(caught.code) : "networkError");
+      setConflictDetails(readConflictDetails(caught));
     } finally {
       setBusy(false);
     }
@@ -117,12 +127,14 @@ export function AdminTimetableManager() {
     setBusy(true);
     setError("");
     setNotice("");
+    setConflictDetails([]);
     try {
       await updateTimetableEntry(entry.timetableId, entry.id, value);
       await loadVersions(selectedId);
       setNotice("editSuccess");
     } catch (caught) {
       setError(caught instanceof ApiError ? errorKey(caught.code) : "networkError");
+      setConflictDetails(readConflictDetails(caught));
     } finally {
       setBusy(false);
     }
@@ -217,7 +229,7 @@ export function AdminTimetableManager() {
         )}
       </div>
 
-      {error && <div className="flex items-start gap-3 rounded-xl border border-bad/30 bg-bad-bg p-4 text-sm leading-6 text-bad" role="alert"><AlertTriangle size={18} className="mt-0.5 shrink-0" aria-hidden="true" /><p>{t(`errors.${error}`)}</p></div>}
+      {error && <div className="flex items-start gap-3 rounded-xl border border-bad/30 bg-bad-bg p-4 text-sm leading-6 text-bad" role="alert"><AlertTriangle size={18} className="mt-0.5 shrink-0" aria-hidden="true" /><div><p>{t(`errors.${error}`)}</p>{conflictDetails.length > 0 && <ul className="mt-2 list-disc space-y-1 ps-5">{conflictDetails.map((detail, index) => <li key={`${detail}-${index}`}>{detail}</li>)}</ul>}</div></div>}
       {notice && <div className="flex items-start gap-3 rounded-xl border border-brand/20 bg-soft p-4 text-sm leading-6 text-brand" role="status"><CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden="true" /><p>{t(`notices.${notice}`)}</p></div>}
 
       {loading || detailLoading ? (
@@ -291,6 +303,17 @@ export function AdminTimetableManager() {
       ) : null}
     </section>
   );
+}
+
+function readConflictDetails(error: unknown): string[] {
+  if (!(error instanceof ApiError) || !error.details) return [];
+  const conflicts = error.details.conflicts;
+  if (!Array.isArray(conflicts)) return [];
+  return conflicts.map((item) => {
+    if (!item || typeof item !== "object") return "";
+    const conflict = item as { teacher?: string; className?: string; period?: number; weekday?: string };
+    return [conflict.teacher, conflict.className, conflict.weekday, conflict.period ? `P${conflict.period}` : undefined].filter(Boolean).join(" · ");
+  }).filter(Boolean);
 }
 
 function errorKey(code?: string): string {
