@@ -11,7 +11,7 @@ export function TimetableTable({
   mode,
 }: {
   entries: TimetableEntry[];
-  mode: "teacher" | "guardian";
+  mode: "teacher" | "guardian" | "admin";
 }) {
   const t = useTranslations("timetable");
   const locale = useLocale();
@@ -34,14 +34,21 @@ export function TimetableTable({
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-surface">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[650px] border-collapse text-start text-sm">
+        <table className={`w-full ${mode === "admin" ? "min-w-[820px]" : "min-w-[650px]"} border-collapse text-start text-sm`}>
           <thead className="bg-bg text-xs text-mute">
             <tr>
               <th scope="col" className="px-4 py-3 font-semibold">{t("day")}</th>
               <th scope="col" className="px-4 py-3 font-semibold">{t("period")}</th>
               <th scope="col" className="px-4 py-3 font-semibold">{t("time")}</th>
               <th scope="col" className="px-4 py-3 font-semibold">{t("subject")}</th>
-              <th scope="col" className="px-4 py-3 font-semibold">{t(mode === "guardian" ? "teacher" : "class")}</th>
+              {mode !== "admin" ? (
+                <th scope="col" className="px-4 py-3 font-semibold">{t(mode === "guardian" ? "teacher" : "class")}</th>
+              ) : (
+                <>
+                  <th scope="col" className="px-4 py-3 font-semibold">{t("class")}</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">{t("teacher")}</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -55,11 +62,18 @@ export function TimetableTable({
                   <span className="inline-flex items-center gap-1.5"><Clock3 size={14} aria-hidden="true" />{entry.period.startTime}–{entry.period.endTime}</span>
                 </td>
                 <td className="px-4 py-3.5 font-semibold">{isArabic ? entry.assignment.subject.name : entry.assignment.subject.nameEn || entry.assignment.subject.name}</td>
-                <td className="px-4 py-3.5 text-mute">
-                  {mode === "guardian"
-                    ? (isArabic ? entry.assignment.staff.fullName : entry.assignment.staff.fullNameEn || entry.assignment.staff.fullName)
-                    : (isArabic ? entry.assignment.class.name : entry.assignment.class.nameEn || entry.assignment.class.name)}
-                </td>
+                {mode === "admin" ? (
+                  <>
+                    <td className="px-4 py-3.5 text-mute">{isArabic ? entry.assignment.class.name : entry.assignment.class.nameEn || entry.assignment.class.name}</td>
+                    <td className="px-4 py-3.5 text-mute">{isArabic ? entry.assignment.staff.fullName : entry.assignment.staff.fullNameEn || entry.assignment.staff.fullName}</td>
+                  </>
+                ) : (
+                  <td className="px-4 py-3.5 text-mute">
+                    {mode === "guardian"
+                      ? (isArabic ? entry.assignment.staff.fullName : entry.assignment.staff.fullNameEn || entry.assignment.staff.fullName)
+                      : (isArabic ? entry.assignment.class.name : entry.assignment.class.nameEn || entry.assignment.class.name)}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
