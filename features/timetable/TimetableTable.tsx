@@ -26,7 +26,7 @@ export function TimetableTable({
       <div className="rounded-xl border border-dashed border-line bg-bg px-5 py-10 text-center">
         <CalendarDays className="mx-auto size-9 text-mute" aria-hidden="true" />
         <p className="mt-3 font-semibold">{t("emptyTitle")}</p>
-        <p className="mt-1 text-sm leading-6 text-mute">{t(mode === "guardian" ? "guardianEmptyDescription" : "teacherEmptyDescription")}</p>
+        <p className="mt-1 text-sm leading-6 text-mute">{t(mode === "guardian" ? "guardianEmptyDescription" : mode === "admin" ? "adminEmptyDescription" : "teacherEmptyDescription")}</p>
       </div>
     );
   }
