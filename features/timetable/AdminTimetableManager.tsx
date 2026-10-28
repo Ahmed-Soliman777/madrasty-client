@@ -44,6 +44,7 @@ export function AdminTimetableManager() {
   const selectedIdRef = useRef("");
 
   const periods = schoolPeriods;
+  const filteredVersions = selectedAcademicYearId ? versions.filter((item) => item.academicYearId === selectedAcademicYearId) : versions;
 
   const loadVersions = useCallback(async (preferredId?: string) => {
     setLoading(true);
@@ -51,8 +52,8 @@ export function AdminTimetableManager() {
     try {
       const [result, years, availablePeriods] = await Promise.all([
         fetchSchoolTimetables(),
-        fetchAcademicYears().catch(() => [] as AcademicYearOption[]),
-        fetchSchoolPeriods().catch(() => [] as SchoolPeriodOption[]),
+        fetchAcademicYears(),
+        fetchSchoolPeriods(),
       ]);
       setVersions(result);
       setAcademicYears(years);
@@ -105,6 +106,23 @@ export function AdminTimetableManager() {
       setError("loadError");
     } finally {
       setDetailLoading(false);
+    }
+  };
+
+  const selectAcademicYear = (academicYearId: string) => {
+    setSelectedAcademicYearId(academicYearId);
+    const matchingVersions = versions.filter((item) => item.academicYearId === academicYearId);
+    const nextId = matchingVersions[0]?.id ?? "";
+    if (nextId) {
+      void loadSelected(nextId);
+    } else {
+      setSelectedId("");
+      selectedIdRef.current = "";
+      setSelected(null);
+      setEditValues({});
+      setError("");
+      setNotice("");
+      setConflictDetails([]);
     }
   };
 
@@ -223,7 +241,7 @@ export function AdminTimetableManager() {
           <label className="block min-w-0 flex-1 text-sm font-semibold">
             {t("chooseAcademicYear")}
             <span className="relative mt-1.5 block">
-              <select value={selectedAcademicYearId} onChange={(event) => setSelectedAcademicYearId(event.target.value)} disabled={loading || busy || academicYears.length === 0} className="min-h-11 w-full appearance-none rounded-lg border border-line bg-bg px-3 pe-9 text-sm font-normal focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
+              <select value={selectedAcademicYearId} onChange={(event) => selectAcademicYear(event.target.value)} disabled={loading || busy || academicYears.length === 0} className="min-h-11 w-full appearance-none rounded-lg border border-line bg-bg px-3 pe-9 text-sm font-normal focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
                 {academicYears.length === 0 && <option value="">{t("noAcademicYears")}</option>}
                 {academicYears.map((year) => <option key={year.id} value={year.id}>{isArabic ? year.name : year.nameEn || year.name}{year.isCurrent ? ` · ${t("currentAcademicYear")}` : ""}</option>)}
               </select>
@@ -233,9 +251,9 @@ export function AdminTimetableManager() {
           <label className="block min-w-0 flex-1 text-sm font-semibold">
             {t("chooseVersion")}
             <span className="relative mt-1.5 block">
-              <select value={selectedId} onChange={(event) => void loadSelected(event.target.value)} disabled={loading || versions.length === 0} className="min-h-11 w-full appearance-none rounded-lg border border-line bg-bg px-3 pe-9 text-sm font-normal focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
-                {versions.length === 0 && <option value="">{t("noVersions")}</option>}
-                {versions.map((version) => <option key={version.id} value={version.id}>{isArabic ? version.academicYear?.name : version.academicYear?.nameEn || version.academicYear?.name} · v{version.version} · {t(`statuses.${version.status}`)}</option>)}
+              <select value={selectedId} onChange={(event) => void loadSelected(event.target.value)} disabled={loading || filteredVersions.length === 0} className="min-h-11 w-full appearance-none rounded-lg border border-line bg-bg px-3 pe-9 text-sm font-normal focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
+                {filteredVersions.length === 0 && <option value="">{t("noVersions")}</option>}
+                {filteredVersions.map((version) => <option key={version.id} value={version.id}>{isArabic ? version.academicYear?.name : version.academicYear?.nameEn || version.academicYear?.name} · v{version.version} · {t(`statuses.${version.status}`)}</option>)}
               </select>
               <ChevronDown size={16} className="pointer-events-none absolute end-3 top-3.5 text-mute" aria-hidden="true" />
             </span>
@@ -244,7 +262,7 @@ export function AdminTimetableManager() {
             <WandSparkles size={16} aria-hidden="true" />{busy ? t("working") : t("generateDraft")}
           </button>
         </div>
-        {versions.length === 0 && !loading && (
+        {filteredVersions.length === 0 && !loading && (
           <div className="mt-4 flex items-start gap-3 rounded-lg border border-dashed border-line bg-bg p-4 text-sm leading-6 text-mute">
             <CircleHelp size={19} className="mt-0.5 shrink-0" aria-hidden="true" />
             <p>{academicYears.length === 0 ? t("noAcademicYearsDescription") : t("noVersionsDescription")}</p>
