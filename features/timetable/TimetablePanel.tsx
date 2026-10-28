@@ -8,17 +8,18 @@ import {
   deleteTimetableEntry,
   fetchGuardianTimetable,
   fetchStudents,
+  fetchTimetable,
   fetchTeacherTimetable,
   fetchTimetables,
   generateTimetableDraft,
   publishTimetable,
   updateTimetableEntry,
   type GuardianTimetableResponse,
-  type ParentStudentData,
   type TimetableEntry,
   type TimetableRecord,
   type TimetableWeekday,
 } from "@/lib/api";
+import type { ParentStudentData } from "@/types";
 
 type Role = "teacher" | "guardian" | "admin";
 const DAYS: TimetableWeekday[] = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
@@ -45,6 +46,7 @@ export function TimetablePanel({ role, studentId }: { role: Role; studentId?: st
   const [students, setStudents] = useState<ParentStudentData[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState(studentId ?? "");
   const [timetables, setTimetables] = useState<TimetableRecord[]>([]);
+  const [timetableDetails, setTimetableDetails] = useState<TimetableRecord | null>(null);
   const [selectedTimetableId, setSelectedTimetableId] = useState("");
   const [academicYearId, setAcademicYearId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -88,7 +90,19 @@ export function TimetablePanel({ role, studentId }: { role: Role; studentId?: st
     return () => { cancelled = true; };
   }, [role, selectedStudentId]);
 
-  const activeTimetable = timetables.find((item) => item.id === selectedTimetableId);
+  useEffect(() => {
+    if (role !== "admin" || !selectedTimetableId) {
+      setTimetableDetails(null);
+      return;
+    }
+    let cancelled = false;
+    fetchTimetable(selectedTimetableId)
+      .then((result) => { if (!cancelled) setTimetableDetails(result); })
+      .catch((caught: unknown) => { if (!cancelled) setError(messageFromError(caught, "loadFailed")); });
+    return () => { cancelled = true; };
+  }, [role, selectedTimetableId]);
+
+  const activeTimetable = timetableDetails?.id === selectedTimetableId ? timetableDetails : timetables.find((item) => item.id === selectedTimetableId);
   const adminEntries = activeTimetable?.entries ?? [];
   const availablePeriods = useMemo(() => {
     const unique = new Map<string, TimetableEntry["period"]>();
