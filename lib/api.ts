@@ -337,43 +337,21 @@ export async function logout(): Promise<void> {
 }
 
 
-export type TimetableStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
-export type TimetableWeekday = "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
-
-export interface TimetableEntry {
-  id: string;
-  timetableId: string;
-  assignmentId: string;
-  staffId?: string;
-  classId: string;
-  periodId: string;
-  weekday: TimetableWeekday;
-  isActive: boolean;
-  period: { id: string; number: number; startTime: string; endTime: string };
-  assignment: {
-    subject: { name: string; nameEn: string };
-    class: { id: string; name: string; nameEn: string; grade?: string; gradeEn?: string };
-    staff: { id: string; fullName: string; fullNameEn: string | null };
-  };
-}
-
 export interface SchoolPeriodOption {
   id: string;
   number: number;
   startTime: string;
   endTime: string;
 }
-
 export interface AcademicYearOption {
   id: string;
   name: string;
   nameEn: string;
   isCurrent: boolean;
 }
-
 export interface TimetableSummary {
   id: string;
-  schoolId: string;
+  schoolId?: string;
   academicYearId: string;
   version: number;
   status: TimetableStatus;
@@ -383,7 +361,6 @@ export interface TimetableSummary {
   _count?: { entries: number };
   entries?: TimetableEntry[];
 }
-
 export interface GenerateTimetableResult {
   timetable: TimetableSummary;
   requestedLessons: number;
@@ -391,27 +368,6 @@ export interface GenerateTimetableResult {
   missing: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
   publishable: boolean;
   message: string;
-}
-
-export interface GuardianTimetableResponse {
-  student: {
-    id: string;
-    fullName: string;
-    fullNameEn: string;
-    class: { name: string; nameEn: string; academicYearId: string };
-  };
-  timetable: { id: string; version: number; status: "PUBLISHED"; entries: TimetableEntry[] } | null;
-}
-
-export async function fetchTeacherTimetable(academicYearId?: string): Promise<TimetableEntry[]> {
-  const params = new URLSearchParams();
-  if (academicYearId) params.set("academicYearId", academicYearId);
-  const suffix = params.size ? `?${params.toString()}` : "";
-  return apiRequest<TimetableEntry[]>(`timetables/teacher/me${suffix}`);
-}
-
-export async function fetchGuardianTimetable(studentId: string): Promise<GuardianTimetableResponse> {
-  return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
 }
 
 export async function fetchSchoolPeriods(): Promise<SchoolPeriodOption[]> {
@@ -440,29 +396,3 @@ export async function generateSchoolTimetable(academicYearId: string): Promise<G
   });
 }
 
-export async function updateTimetableEntry(
-  timetableId: string,
-  entryId: string,
-  input: { periodId: string; weekday: TimetableWeekday },
-): Promise<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }> {
-  return apiRequest<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }>(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, {
-    method: "PATCH",
-    body: JSON.stringify(input),
-  });
-}
-
-export async function deleteTimetableEntry(timetableId: string, entryId: string): Promise<{
-  deleted: boolean;
-  entryId: string;
-  assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean };
-}> {
-  return apiRequest<{ deleted: boolean; entryId: string; assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean } }>(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, { method: "DELETE" });
-}
-
-export async function publishSchoolTimetable(timetableId: string): Promise<TimetableSummary> {
-  return apiRequest<TimetableSummary>(`timetables/${encodeURIComponent(timetableId)}/publish`, { method: "POST" });
-}
-
-export async function deleteSchoolTimetable(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
-  return apiRequest<{ deleted: boolean; timetableId: string }>(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
-}
