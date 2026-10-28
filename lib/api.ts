@@ -10,12 +10,14 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:
 export class ApiError extends Error {
   status: number;
   code?: string;
+  details?: Record<string, unknown>;
 
-  constructor(message: string, status: number, code?: string) {
+  constructor(message: string, status: number, code?: string, details?: Record<string, unknown>) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -93,6 +95,118 @@ export interface TeacherAssignment {
   subject: { id: string; name: string; nameEn: string };
 }
 
+export type TimetableStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type TimetableWeekday = "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
+
+export interface TimetablePeriod {
+  id: string;
+  number: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface TimetableEntry {
+  id: string;
+  timetableId: string;
+  assignmentId: string;
+  staffId?: string;
+  classId: string;
+  weekday: TimetableWeekday;
+  periodId: string;
+  isActive?: boolean;
+  period: TimetablePeriod;
+  assignment: {
+    id?: string;
+    subject: { name: string; nameEn: string };
+    class: { id: string; name: string; nameEn: string; grade?: string; gradeEn?: string };
+    staff: { id: string; fullName: string; fullNameEn: string | null };
+  };
+  timetable?: { id: string; version: number; status: TimetableStatus; academicYearId: string };
+}
+
+export interface TimetableRecord {
+  id: string;
+  academicYearId: string;
+  version: number;
+  status: TimetableStatus;
+  entries?: TimetableEntry[];
+  academicYear?: { id: string; name: string; nameEn: string; isCurrent?: boolean };
+  _count?: { entries: number };
+  requestedLessons?: number;
+  placedLessons?: number;
+  missing?: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
+}
+
+export interface GuardianTimetableResponse {
+  student: { id: string; fullName: string; fullNameEn: string; class: { name: string; nameEn: string; academicYearId: string } };
+  timetable: { id: string; version: number; status: "PUBLISHED"; entries: TimetableEntry[] } | null;
+}
+
+export async function fetchTeacherTimetable(academicYearId?: string): Promise<TimetableEntry[]> {
+  const query = academicYearId ? `?academicYearId=${encodeURIComponent(academicYearId)}` : "";
+  return apiRequest<TimetableEntry[]>(`timetables/teacher/me${query}`);
+}
+
+export async function fetchGuardianTimetable(studentId: string): Promise<GuardianTimetableResponse> {
+  return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
+}
+
+export async function fetchTimetable(timetableId: string): Promise<TimetableRecord> {
+  return apiRequest<TimetableRecord>(`timetables/${encodeURIComponent(timetableId)}`);
+}
+
+export async function fetchTimetables(academicYearId?: string): Promise<TimetableRecord[]> {
+  const query = academicYearId ? `?academicYearId=${encodeURIComponent(academicYearId)}` : "";
+  return apiRequest<TimetableRecord[]>(`timetables${query}`);
+}
+
+export async function generateTimetableDraft(academicYearId: string): Promise<TimetableRecord & {
+  requestedLessons: number;
+  placedLessons: number;
+  missing: NonNullable<TimetableRecord["missing"]>;
+  publishable: boolean;
+  message: string;
+}> {
+  return apiRequest("timetables/generate", {
+    method: "POST",
+    body: JSON.stringify({ academicYearId }),
+  });
+}
+
+export async function updateTimetableEntry(
+  timetableId: string,
+  entryId: string,
+  input: { periodId: string; weekday: TimetableWeekday },
+): Promise<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteTimetableEntry(timetableId: string, entryId: string) {
+  return apiRequest<{ deleted: boolean; assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean } }>(
+    `timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`,
+    { method: "DELETE" },
+  );
+}
+
+export async function publishTimetable(timetableId: string): Promise<TimetableRecord> {
+  return apiRequest<TimetableRecord>(`timetables/${encodeURIComponent(timetableId)}/publish`, { method: "POST" });
+}
+
+export async function deleteTimetableDraft(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
+}
+
+export async function publishSchoolTimetable(timetableId: string): Promise<TimetableRecord> {
+  return publishTimetable(timetableId);
+}
+
+export async function deleteSchoolTimetable(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
+  return deleteTimetableDraft(timetableId);
+}
+
 export interface HomeworkCreateInput {
   assignmentId: string;
   title: string;
@@ -112,7 +226,7 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUna
       cache: "no-store",
     });
     const payload = await response.json().catch(() => null) as
-      | { message?: string | string[]; code?: string }
+      | { message?: string | string[]; code?: string; [key: string]: unknown }
       | T
       | null;
 
@@ -120,9 +234,9 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, redirectOnUna
       if (response.status === 401 && redirectOnUnauthorized && typeof window !== "undefined") {
         window.location.assign("/");
       }
-      const body = payload as { message?: string | string[]; code?: string } | null;
+      const body = payload as { message?: string | string[]; code?: string; [key: string]: unknown } | null;
       const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
-      throw new ApiError(message ?? "Request failed", response.status, body?.code);
+      throw new ApiError(message ?? "Request failed", response.status, body?.code, body ?? undefined);
     }
     return payload as T;
   } catch (error) {
@@ -232,3 +346,64 @@ export async function logout(): Promise<void> {
     throw new ApiError("Unable to clear session cookie", 0, "LOGOUT_FAILED");
   }
 }
+
+
+export interface SchoolPeriodOption {
+  id: string;
+  number: number;
+  startTime: string;
+  endTime: string;
+}
+export interface AcademicYearOption {
+  id: string;
+  name: string;
+  nameEn: string;
+  isCurrent: boolean;
+}
+export interface TimetableSummary {
+  id: string;
+  schoolId?: string;
+  academicYearId: string;
+  version: number;
+  status: TimetableStatus;
+  approvedAt?: string | null;
+  publishedAt?: string | null;
+  academicYear?: { id: string; name: string; nameEn: string; isCurrent?: boolean };
+  _count?: { entries: number };
+  entries?: TimetableEntry[];
+}
+export interface GenerateTimetableResult {
+  timetable: TimetableSummary;
+  requestedLessons: number;
+  placedLessons: number;
+  missing: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
+  publishable: boolean;
+  message: string;
+}
+
+export async function fetchSchoolPeriods(): Promise<SchoolPeriodOption[]> {
+  return apiRequest<SchoolPeriodOption[]>("timetables/periods");
+}
+
+export async function fetchAcademicYears(): Promise<AcademicYearOption[]> {
+  return apiRequest<AcademicYearOption[]>("timetables/academic-years");
+}
+
+export async function fetchSchoolTimetables(academicYearId?: string): Promise<TimetableSummary[]> {
+  const params = new URLSearchParams();
+  if (academicYearId) params.set("academicYearId", academicYearId);
+  const suffix = params.size ? `?${params.toString()}` : "";
+  return apiRequest<TimetableSummary[]>(`timetables${suffix}`);
+}
+
+export async function fetchSchoolTimetable(timetableId: string): Promise<TimetableSummary> {
+  return apiRequest<TimetableSummary>(`timetables/${encodeURIComponent(timetableId)}`);
+}
+
+export async function generateSchoolTimetable(academicYearId: string): Promise<GenerateTimetableResult> {
+  return apiRequest<GenerateTimetableResult>("timetables/generate", {
+    method: "POST",
+    body: JSON.stringify({ academicYearId }),
+  });
+}
+
