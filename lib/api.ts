@@ -107,7 +107,10 @@ export interface TimetablePeriod {
 
 export interface TimetableEntry {
   id: string;
-  timetableId?: string;
+  timetableId: string;
+  assignmentId: string;
+  staffId?: string;
+  classId: string;
   weekday: TimetableWeekday;
   periodId: string;
   isActive?: boolean;
