@@ -95,6 +95,103 @@ export interface TeacherAssignment {
   subject: { id: string; name: string; nameEn: string };
 }
 
+export type TimetableStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type TimetableWeekday = "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
+
+export interface TimetablePeriod {
+  id: string;
+  number: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface TimetableEntry {
+  id: string;
+  timetableId?: string;
+  weekday: TimetableWeekday;
+  periodId: string;
+  isActive?: boolean;
+  period: TimetablePeriod;
+  assignment: {
+    id?: string;
+    subject: { name: string; nameEn: string };
+    class: { id: string; name: string; nameEn: string; grade?: string; gradeEn?: string };
+    staff: { id: string; fullName: string; fullNameEn: string | null };
+  };
+  timetable?: { id: string; version: number; status: TimetableStatus; academicYearId: string };
+}
+
+export interface TimetableRecord {
+  id: string;
+  academicYearId: string;
+  version: number;
+  status: TimetableStatus;
+  entries?: TimetableEntry[];
+  academicYear?: { id: string; name: string; nameEn: string; isCurrent?: boolean };
+  _count?: { entries: number };
+  requestedLessons?: number;
+  placedLessons?: number;
+  missing?: Array<{ assignmentId: string; classId: string; staffId: string; subject: string; requested: number; placed: number }>;
+}
+
+export interface GuardianTimetableResponse {
+  student: { id: string; fullName: string; fullNameEn: string; class: { name: string; nameEn: string; academicYearId: string } };
+  timetable: { id: string; version: number; status: "PUBLISHED"; entries: TimetableEntry[] } | null;
+}
+
+export async function fetchTeacherTimetable(academicYearId?: string): Promise<TimetableEntry[]> {
+  const query = academicYearId ? `?academicYearId=${encodeURIComponent(academicYearId)}` : "";
+  return apiRequest<TimetableEntry[]>(`timetables/teacher/me${query}`);
+}
+
+export async function fetchGuardianTimetable(studentId: string): Promise<GuardianTimetableResponse> {
+  return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
+}
+
+export async function fetchTimetables(academicYearId?: string): Promise<TimetableRecord[]> {
+  const query = academicYearId ? `?academicYearId=${encodeURIComponent(academicYearId)}` : "";
+  return apiRequest<TimetableRecord[]>(`timetables${query}`);
+}
+
+export async function generateTimetableDraft(academicYearId: string): Promise<TimetableRecord & {
+  requestedLessons: number;
+  placedLessons: number;
+  missing: NonNullable<TimetableRecord["missing"]>;
+  publishable: boolean;
+  message: string;
+}> {
+  return apiRequest("timetables/generate", {
+    method: "POST",
+    body: JSON.stringify({ academicYearId }),
+  });
+}
+
+export async function updateTimetableEntry(
+  timetableId: string,
+  entryId: string,
+  input: { periodId: string; weekday: TimetableWeekday },
+): Promise<{ entry: TimetableEntry; conflictCheck: { hasConflicts: boolean; checkedTeacherAndClass: boolean } }> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteTimetableEntry(timetableId: string, entryId: string) {
+  return apiRequest<{ deleted: boolean; assignment: { requiredLessons: number | null; placedLessons: number; hasMissingLessons: boolean } }>(
+    `timetables/${encodeURIComponent(timetableId)}/entries/${encodeURIComponent(entryId)}`,
+    { method: "DELETE" },
+  );
+}
+
+export async function publishTimetable(timetableId: string): Promise<TimetableRecord> {
+  return apiRequest<TimetableRecord>(`timetables/${encodeURIComponent(timetableId)}/publish`, { method: "POST" });
+}
+
+export async function deleteTimetableDraft(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
+  return apiRequest(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
+}
+
 export interface HomeworkCreateInput {
   assignmentId: string;
   title: string;
