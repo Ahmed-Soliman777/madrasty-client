@@ -321,7 +321,7 @@ export function AdminTimetableManager() {
             </div>
           )}
 
-          {selected.entries && <TimetableTable entries={selected.entries} mode="teacher" />}
+          {selected.entries && <TimetableTable entries={selected.entries} mode="admin" />}
         </>
       ) : null}
     </section>
