@@ -379,6 +379,7 @@
     "chooseAcademicYear": "Academic year",
     "noAcademicYears": "No academic years available",
     "noAcademicYearsDescription": "The server did not return any available academic years. Refresh or ask the system administrator to check the academic-year setup.",
-    "currentAcademicYear": "Current year"
+    "currentAcademicYear": "Current year",
+    "adminEmptyDescription": "There are no lessons in this version. Generate a proposed version or check assignment configuration."
   }
 }
