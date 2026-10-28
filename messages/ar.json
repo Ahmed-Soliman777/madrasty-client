@@ -379,6 +379,7 @@
     "chooseAcademicYear": "السنة الدراسية",
     "noAcademicYears": "لا توجد سنوات دراسية",
     "noAcademicYearsDescription": "تعذر العثور على سنة دراسية متاحة من الخادم. حدّث الصفحة أو اطلب من مسؤول النظام التحقق من إعدادات السنة الدراسية.",
-    "currentAcademicYear": "السنة الحالية"
+    "currentAcademicYear": "السنة الحالية",
+    "adminEmptyDescription": "لا توجد حصص في هذه النسخة. أنشئ نسخة مقترحة أو تحقق من إعدادات التكليفات."
   }
 }
