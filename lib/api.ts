@@ -148,6 +148,10 @@ export async function fetchGuardianTimetable(studentId: string): Promise<Guardia
   return apiRequest<GuardianTimetableResponse>(`timetables/guardian/student/${encodeURIComponent(studentId)}`);
 }
 
+export async function fetchTimetable(timetableId: string): Promise<TimetableRecord> {
+  return apiRequest<TimetableRecord>(`timetables/${encodeURIComponent(timetableId)}`);
+}
+
 export async function fetchTimetables(academicYearId?: string): Promise<TimetableRecord[]> {
   const query = academicYearId ? `?academicYearId=${encodeURIComponent(academicYearId)}` : "";
   return apiRequest<TimetableRecord[]>(`timetables${query}`);
