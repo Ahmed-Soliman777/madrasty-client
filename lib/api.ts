@@ -196,6 +196,14 @@ export async function deleteTimetableDraft(timetableId: string): Promise<{ delet
   return apiRequest(`timetables/${encodeURIComponent(timetableId)}`, { method: "DELETE" });
 }
 
+export async function publishSchoolTimetable(timetableId: string): Promise<TimetableRecord> {
+  return publishTimetable(timetableId);
+}
+
+export async function deleteSchoolTimetable(timetableId: string): Promise<{ deleted: boolean; timetableId: string }> {
+  return deleteTimetableDraft(timetableId);
+}
+
 export interface HomeworkCreateInput {
   assignmentId: string;
   title: string;
