@@ -46,10 +46,7 @@ const AuthenticationComponent = () => {
             <GraduationCap size={21} aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-lg font-bold tracking-tight text-navy">{t("brandName")}</span>
-              <span className="rounded border border-line bg-soft px-1.5 py-0.5 text-[10px] font-bold text-brand">NEIS</span>
-            </div>
+            <span className="text-lg font-bold tracking-tight text-navy">{t("brandName")}</span>
             <p className="mt-0.5 hidden text-xs text-mute lg:block">{t("schoolName")}</p>
           </div>
         </Link>

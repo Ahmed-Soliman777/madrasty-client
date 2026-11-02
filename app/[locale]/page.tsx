@@ -35,7 +35,6 @@ export default async function Home({
             </span>
             <span className="min-w-0">
               <span className="block text-lg font-extrabold tracking-tight text-navy">{t("brandName")}</span>
-              <span className="hidden text-xs text-mute sm:block">{t("schoolName")}</span>
             </span>
           </Link>
 
@@ -230,7 +229,7 @@ export default async function Home({
 
       <footer className="border-t border-line bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-mute sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p className="font-semibold text-navy">{t("brandName")} · {t("schoolName")}</p>
+          <p className="font-semibold text-navy">{t("brandName")}</p>
           <p>{t("footerNote")}</p>
         </div>
       </footer>
